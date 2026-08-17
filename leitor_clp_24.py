@@ -57,9 +57,9 @@ VALOR_PRESSAO_BAR = 0.00
 POTENCIA_KW = 0.00  # Mantido nome e variável para medidor de potência
 STATUS_COMUNICACAO = "INICIANDO"
 
-html_filename = "index.html"
-nome_imagem_parker = "image_e84f27.jpg"
-nome_imagem_ipega = "controle_ipega.jpg"
+html_filename = "assets/index.html"
+nome_imagem_parker = "assets/image_e84f27.jpg"
+nome_imagem_ipega = "assets/controle_ipega.jpg"
 
 # NOMES REAIS DOS ARQUIVOS STL
 nome_stl_base = "assets/MONTAGEM_BASE.stl"
@@ -1368,6 +1368,7 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
         )
         caminho_arquivo_local = os.path.join(diretorio_atual, path_limpo)
 
+        # 1. Rota para ler os dados do CLP (JSON)
         if path_limpo == "dados_clp":
             self.send_response(200)
             self.send_header("Content-type", "application/json")
@@ -1386,38 +1387,33 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
             
             self.wfile.write(json.dumps(payload).encode("utf-8"))
 
-        elif path_limpo in [nome_imagem_parker, nome_imagem_ipega]:
+        # 2. Rota genérica para carregar QUALQUER arquivo dentro da pasta assets/ (STLs e Imagens)
+        elif path_limpo.startswith("assets/"):
             if os.path.exists(caminho_arquivo_local):
                 self.send_response(200)
-                ext = "png" if path_limpo.endswith(".png") else "jpeg"
-                self.send_header("Content-type", f"image/{ext}")
+                if path_limpo.lower().endswith(".stl"):
+                    self.send_header("Content-type", "model/stl")
+                elif path_limpo.lower().endswith((".jpg", ".jpeg")):
+                    self.send_header("Content-type", "image/jpeg")
+                elif path_limpo.lower().endswith(".png"):
+                    self.send_header("Content-type", "image/png")
                 self.send_header("Cache-Control", "max-age=86400")
                 self.end_headers()
-                with open(caminho_arquivo_local, "rb") as img_file:
-                    self.wfile.write(img_file.read())
+                with open(caminho_arquivo_local, "rb") as f:
+                    self.wfile.write(f.read())
             else:
+                print(f"\n[ERRO 404] Arquivo em assets nao encontrado: {caminho_arquivo_local}")
                 self.send_response(404)
                 self.end_headers()
 
-        elif path_limpo.endswith(".stl"):
-            if os.path.exists(caminho_arquivo_local):
-                self.send_response(200)
-                self.send_header("Content-type", "model/stl")
-                self.send_header("Cache-Control", "max-age=86400")
-                self.end_headers()
-                with open(caminho_arquivo_local, "rb") as stl_file:
-                    self.wfile.write(stl_file.read())
-            else:
-                print(f"\n[ERRO 404] Arquivo não encontrado: {caminho_arquivo_local}")
-                self.send_response(404)
-                self.end_headers()
-
+        # 3. Rota principal que carrega a página HTML
         elif path_limpo == "" or path_limpo == "index.html":
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
             self.wfile.write(html_content.encode("utf-8"))
 
+        # 4. Qualquer outra rota não encontrada
         else:
             self.send_response(404)
             self.end_headers()
