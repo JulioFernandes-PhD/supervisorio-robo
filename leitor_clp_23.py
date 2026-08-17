@@ -1436,7 +1436,7 @@ def obter_ip_local():
 
 
 ip_computador = obter_ip_local()
-porta_servidor = 8085
+porta_servidor = int(os.environ.get("PORT", 8085))
 
 
 def rodar_servidor():
