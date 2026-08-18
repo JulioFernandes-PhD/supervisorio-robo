@@ -9,12 +9,19 @@ import time
 import urllib.parse
 import webbrowser
 
+# Tenta importar requests para a transmissão externa
+try:
+    import requests
+    REQUESTS_DISPONIVEL = True
+except ImportError:
+    REQUESTS_DISPONIVEL = False
+
 # ==========================================
 # DESALOCAÇÃO DE THREADS ANTERIORES
 # ==========================================
 try:
     for thread in threading.enumerate():
-        if thread.name.startswith("CLP_Thread") or thread.name.startswith("HTTP_Thread"):
+        if thread.name.startswith("CLP_Thread") or thread.name.startswith("HTTP_Thread") or thread.name.startswith("Transmissor_Thread"):
             print(f"[RESTART] Encerrando thread antiga: {thread.name}")
 except Exception:
     pass
@@ -29,7 +36,7 @@ except ImportError:
     PYSERIAL_DISPONIVEL = False
 
 # ==========================================
-# CONFIGURAÇÕES DA COMUNICAÇÃO SERIAL (CLP)
+# CONFIGURAÇÕES DA COMUNICAÇÃO SERIAL (CLP) E NUVEM
 # ==========================================
 PORTA_COM = "COM3"
 BAUDRATE = 38400
@@ -37,6 +44,10 @@ DATA_BITS = 7
 PARIDADE = "E"
 STOP_BITS = 1
 USAR_CLP_REAL = True
+
+# URL do seu serviço hospedado no Render
+URL_RENDER = "https://supervisorio-robo.onrender.com/api/atualizar"
+ENVIAR_PARA_RENDER = True  # Ativa o envio automático para a nuvem quando executado na bancada
 
 # ==========================================
 # CALIBRAÇÃO DO TRANSDUTOR DE PRESSÃO (D200)
@@ -308,6 +319,36 @@ def worker_leitura_clp():
 
 
 # ==========================================
+# THREAD TRANSMISSORA DE DADOS PARA A NUVEM (RENDER)
+# ==========================================
+def worker_transmissor_nuvem():
+    """Envia leituras locais do CLP em tempo real para a instância do Render."""
+    if not REQUESTS_DISPONIVEL:
+        print("[TRANSMISSOR] Módulo 'requests' não está instalado. Transmissão para a nuvem desativada.")
+        return
+
+    print(f"[TRANSMISSOR] Thread iniciada. Disparando dados para: {URL_RENDER}")
+
+    while True:
+        if ENVIAR_PARA_RENDER and USAR_CLP_REAL:
+            with dados_lock:
+                payload = {
+                    "entradas": ESTADO_ENTRADAS,
+                    "saidas": ESTADO_SAIDAS,
+                    "pressao_bar": VALOR_PRESSAO_BAR,
+                    "potencia_kw": POTENCIA_KW,
+                    "detalhamento_potencia": DETALHAMENTO_POTENCIA
+                }
+
+            try:
+                resposta = requests.post(URL_RENDER, json=payload, timeout=0.8)
+            except Exception:
+                pass  # Mantém a execução limpa caso ocorra oscilação de internet
+
+        time.sleep(0.1)  # Envia atualizações a cada 100ms
+
+
+# ==========================================
 # SERVIDOR HTTP & ROTEAMENTO DE DADOS
 # ==========================================
 class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -471,15 +512,23 @@ if __name__ == "__main__":
     if not PYSERIAL_DISPONIVEL:
         USAR_CLP_REAL = False
 
+    # Thread 1: Leitura Serial do CLP / Simulador
     thread_clp = threading.Thread(
         target=worker_leitura_clp, name="CLP_Thread", daemon=True
     )
     thread_clp.start()
 
+    # Thread 2: Servidor Web Local HTTP
     thread_web = threading.Thread(
         target=rodar_servidor, name="HTTP_Thread", daemon=True
     )
     thread_web.start()
+
+    # Thread 3: Transmissor Ativo de Dados para o Render
+    thread_transmissor = threading.Thread(
+        target=worker_transmissor_nuvem, name="Transmissor_Thread", daemon=True
+    )
+    thread_transmissor.start()
 
     try:
         webbrowser.open(f"http://localhost:{porta_servidor}/")
