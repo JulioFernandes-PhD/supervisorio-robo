@@ -21,6 +21,27 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 .btn-menu { display: block; width: 100%; padding: 12px 10px; margin-bottom: 8px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 5px; cursor: pointer; text-align: left; font-weight: bold; color: #475569; font-size: 0.95rem; }
 .btn-menu.ativo { background: #FF4B4B; color: #FFFFFF; border-color: #FF4B4B; }
 .btn-menu.destaque { border-left: 4px solid #10b981; }
+.btn-voltar-hub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  color: #38bdf8;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-voltar-hub:hover {
+  background: #1e293b;
+  color: #7dd3fc;
+}
 .conteudo-principal { flex-grow: 1; width: 100%; min-width: 0; }
 .tela { display: none; width: 100%; }
 .tela.ativa { display: block; }
@@ -175,6 +196,10 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 <body>
 <div class="container-principal">
   <div class="menu-lateral">
+    <!-- Botão de Voltar ao Hub de Projetos -->
+    <button class="btn-voltar-hub" onclick="voltarAoHub()">
+      ← Voltar ao Hub
+    </button>
     <h3>Menu</h3>
     <button class="btn-menu ativo destaque" onclick="mudarTela('base_stl_nova', this)">Estrutura CAD 3D</button>
     <button class="btn-menu" onclick="mudarTela('telemetria', this)">Telemetria</button>
@@ -234,7 +259,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 
     <div id="tela-pressao_real" class="tela">
       <div class="wrapper-manometro-real">
-        <img class="imagem-fundo-manometro" src="assets/image_e84f27.jpg" alt="Sensor Parker">
+        <img class="imagem-fundo-manometro" src="/assets/image_e84f27.jpg" alt="Sensor Parker">
         <div id="valor-display-real" class="display-digital-sobreposto">0.00</div>
       </div>
     </div>
@@ -242,7 +267,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     <div id="tela-controle_bt" class="tela">
       <div class="card-controle">
         <div class="wrapper-controle-foto">
-          <img class="imagem-fundo-controle" src="assets/controle_ipega.jpg" alt="Controle Ípega">
+          <img class="imagem-fundo-controle" src="/assets/controle_ipega.jpg" alt="Controle Ípega">
 
           <div id="gp_foto_x20" class="overlay-btn"></div>
           <div id="gp_foto_x21" class="overlay-btn"></div>
@@ -471,6 +496,12 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 let y2Ligado = false;
 let telaAtual = 'base_stl_nova';
 
+function voltarAoHub() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token') || localStorage.getItem('auth_token');
+    window.location.href = '/dashboard?token=' + token;
+}
+
 function mudarTela(tela, botao) {
     telaAtual = tela;
     document.querySelectorAll('.tela').forEach($t => $t.classList.remove('ativa'));
@@ -570,14 +601,14 @@ scene.add(gantryGroup);
 let meshBase = null, meshCarrox = null, meshCarroY = null, meshCarroz = null;
 
 const loaderBase = new THREE.STLLoader();
-loaderBase.load('assets/MONTAGEM_BASE.stl', function (geometryBase) {
+loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     const materialBase = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.7 });
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
     gantryGroup.add(meshBase);
 
     const loaderCarroX = new THREE.STLLoader();
-    loaderCarroX.load('assets/MONTAGEM_CARRO_X.stl', function (geometryCarroX) {
+    loaderCarroX.load('/assets/MONTAGEM_CARRO_X.stl', function (geometryCarroX) {
         const materialCarroX = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, metalness: 0.8 });
         geometryCarroX.computeVertexNormals();
         meshCarrox = new THREE.Mesh(geometryCarroX, materialCarroX);
@@ -587,7 +618,7 @@ loaderBase.load('assets/MONTAGEM_BASE.stl', function (geometryBase) {
         gantryGroup.add(meshCarrox);
 
         const loaderCarroy = new THREE.STLLoader();
-        loaderCarroy.load('assets/MONTAGEM_CARRO_Y.stl', function (geometryCarroY) {
+        loaderCarroy.load('/assets/MONTAGEM_CARRO_Y.stl', function (geometryCarroY) {
             const materialCarroY = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.2, metalness: 0.8 });
             geometryCarroY.computeVertexNormals();
             meshCarroY = new THREE.Mesh(geometryCarroY, materialCarroY);
@@ -600,7 +631,7 @@ loaderBase.load('assets/MONTAGEM_BASE.stl', function (geometryBase) {
             gantryGroup.add(meshCarroY);
 
             const loaderCarroz = new THREE.STLLoader();
-            loaderCarroz.load('assets/MONTAGEM_CARRO_Z.stl', function (geometryCarroz) {
+            loaderCarroz.load('/assets/MONTAGEM_CARRO_Z.stl', function (geometryCarroz) {
                 const materialCarroz = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.8 });
                 geometryCarroz.computeVertexNormals();
                 meshCarroz = new THREE.Mesh(geometryCarroz, materialCarroz);
@@ -646,13 +677,12 @@ let amostraCount = 0;
 const maxPontos = 50;
 
 function atualizarTelemetria() {
-    const agora = new Date(); // Objeto Date com suporte completo a milissegundos
+    const agora = new Date();
 
     Plotly.extendTraces('plotX', { x: [[agora]], y: [[deslocamentoAtualX]] }, [0], 100);
     Plotly.extendTraces('plotY', { x: [[agora]], y: [[deslocamentoAtualY]] }, [0], 100);
     Plotly.extendTraces('plotZ', { x: [[agora]], y: [[deslocamentoAtualZ]] }, [0], 100);
 
-    // Atualiza o texto do eixo X com a hora atual
     const textoHorario = `Horário (${obterHorarioAtualFormatado()})`;
     Plotly.relayout('plotX', { 'xaxis.title.text': textoHorario });
     Plotly.relayout('plotY', { 'xaxis.title.text': textoHorario });
@@ -737,7 +767,6 @@ function redimensionarThreeJS() {
 }
 window.addEventListener('resize', redimensionarThreeJS);
 
-// 1. Função para formatar o horário atual em "HH:MMh"
 function obterHorarioAtualFormatado() {
     const agora = new Date();
     const horas = String(agora.getHours()).padStart(2, '0');
@@ -749,12 +778,12 @@ const layoutPadrao = {
     title: { text: 'Posição Eixo Z (mm)' },
     yaxis: { title: { text: 'mm' } },
     xaxis: {
-        type: 'date', // Habilita a interpolação temporal contínua
-        tickformat: '%S s', // Exibe apenas os segundos (ex: 35s, 36s, 37s...)
-        nticks: 6, // Limita a quantidade de rótulos na tela para não poluir
+        type: 'date',
+        tickformat: '%S s',
+        nticks: 6,
         title: {
             text: 'Horário (--:--h)',
-            standoff: 15 // Empurra o título "Horário" mais para baixo, liberando os números
+            standoff: 15
         }
     },
     margin: { t: 40, b: 60, l: 50, r: 20 }

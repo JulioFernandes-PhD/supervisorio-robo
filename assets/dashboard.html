@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Projetos - Julio Fernandes</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 30px;
+            background-image: radial-gradient(circle at 50% 0%, #161b22 0%, #0d1117 100%);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+        .brand h1 { font-size: 1.6rem; color: #f0f6fc; }
+        .brand p { font-size: 0.85rem; color: #8b949e; }
+        .btn-logout {
+            padding: 8px 16px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #ff7b72;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-logout:hover { background: #30363d; }
+        
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00f2fe;
+            box-shadow: 0 10px 30px rgba(0,242,254,0.15);
+        }
+        .card-tag {
+            align-self: flex-start;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .tag-ativo { background: rgba(46, 160, 67, 0.2); color: #3fb950; border: 1px solid #2ea043; }
+        .tag-breve { background: rgba(210, 153, 34, 0.2); color: #d29922; border: 1px solid #d29922; }
+        .card h3 { font-size: 1.25rem; color: #f0f6fc; margin-bottom: 10px; }
+        .card p { font-size: 0.9rem; color: #8b949e; line-height: 1.4; margin-bottom: 20px; }
+        .btn-acessar {
+            width: 100%;
+            padding: 10px;
+            background: #238636;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        .btn-acessar:hover { background: #2ea043; }
+        .btn-disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Sistemas de Supervisão</h1>
+            <p>Hub de Projetos - Julio Fernandes</p>
+        </div>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </header>
+
+    <main class="grid-cards">
+        <!-- CARD 1: ROBÔ CARTESIANO -->
+        <div class="card">
+            <div>
+                <span class="card-tag tag-ativo">ONLINE</span>
+                <h3>Robô Cartesiano 3D</h3>
+                <p>Supervisório com cinemática 3D em tempo real, telemetria de pressão (D200) e cálculo de consumo elétrico.</p>
+            </div>
+            <button class="btn-acessar" onclick="abrirProjeto('/supervisorio/robo-cartesiano')">ACESSAR SUPERVISÓRIO</button>
+        </div>
+
+        <!-- CARD 2: BANCADA HIDRÁULICA/PNEUMÁTICA -->
+        <div class="card">
+            <div>
+                <span class="card-tag tag-breve">EM DESENVOLVIMENTO</span>
+                <h3>Bancada Hidráulica / Pneumática</h3>
+                <p>Monitoramento de filtros Parker, proporcionalidade de válvulas solenoides e análise de vazão em tempo real.</p>
+            </div>
+            <button class="btn-acessar btn-disabled" disabled>EM BREVE</button>
+        </div>
+
+        <!-- CARD 3: NOVO PROJETO -->
+        <div class="card">
+            <div>
+                <span class="card-tag tag-breve">MÓDULO FUTURO</span>
+                <h3>Máquina de Contagem de Anéis</h3>
+                <p>Contagem de precisão para anéis de borracha de 2mm com sensores ópticos/fibra e atuador de triagem.</p>
+            </div>
+            <button class="btn-acessar btn-disabled" disabled>EM BREVE</button>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || localStorage.getItem('auth_token');
+
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        function abrirProjeto(rota) {
+            window.location.href = `${rota}?token=${token}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

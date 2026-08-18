@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito - Control Hub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #161b22 0%, #0d1117 100%);
+        }
+        .login-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-top: 4px solid #00f2fe;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .logo-area { text-align: center; margin-bottom: 30px; }
+        .logo-area h2 { font-size: 1.5rem; color: #f0f6fc; font-weight: 600; letter-spacing: 1px; }
+        .logo-area p { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 8px; font-weight: 500; }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus { border-color: #00f2fe; box-shadow: 0 0 8px rgba(0,242,254,0.3); }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 10px;
+        }
+        .btn-login:hover { opacity: 0.9; }
+        .error-msg { color: #ff7b72; font-size: 0.85rem; text-align: center; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo-area">
+            <h2>SUPERVISÓRIO CLP</h2>
+            <p>Projetos - Automação Industrial</p>
+        </div>
+        <form id="formLogin">
+            <div class="form-group">
+                <label for="usuario">Usuário</label>
+                <input type="text" id="usuario" required placeholder="Digite seu usuário">
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-login">ACESSAR PAINEL</button>
+            <div id="erro" class="error-msg">Usuário ou senha inválidos.</div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            const msgErro = document.getElementById('erro');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, senha })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                    window.location.href = '/dashboard?token=' + data.token;
+                } else {
+                    msgErro.style.display = 'block';
+                }
+            } catch (err) {
+                msgErro.textContent = "Erro ao conectar com o servidor.";
+                msgErro.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
