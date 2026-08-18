@@ -384,13 +384,15 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
             except Exception:
                 pass
 
-        # 2. Rota de Recepção de Dados Segura (Transmissão Ativa da Bancada Local para a Nuvem)
+# 2. Rota de Recepção de Dados Segura (Transmissão Ativa da Bancada Local para a Nuvem)
         elif self.path == "/api/atualizar":
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length).decode("utf-8")
             try:
                 dados_recebidos = json.loads(body)
                 with dados_lock:
+                    USAR_CLP_REAL = True  # Força a nuvem a aceitar a leitura física
+                    
                     if "entradas" in dados_recebidos:
                         ESTADO_ENTRADAS.update(dados_recebidos["entradas"])
                     if "saidas" in dados_recebidos:
@@ -401,7 +403,7 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         POTENCIA_KW = dados_recebidos["potencia_kw"]
                     if "detalhamento_potencia" in dados_recebidos:
                         DETALHAMENTO_POTENCIA.update(dados_recebidos["detalhamento_potencia"])
-                    STATUS_COMUNICACAO = "TRANSMISSAO_LOCAL_OK"
+                    STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
 
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
