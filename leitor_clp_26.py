@@ -106,13 +106,9 @@ def calcular_pressao_com_zero(val_bruto_d200):
 
 
 def calcular_potencia_instantanea():
-    """
-    Calcula o detalhamento e o consumo total de potência em Watts (W).
-    Corrige o comportamento do Motor X no torque de retenção.
-    """
     detalhe = {
         "eletronica": 18.0,
-        "motor_x": 0.0,
+        "motor_x": 15.0,  # Garante torque de retenção mínimo ativo
         "solenoide_y": 0.0,
         "solenoide_z": 0.0,
         "vacuo": 0.0,
@@ -120,26 +116,11 @@ def calcular_potencia_instantanea():
     }
 
     with dados_lock:
-        driver_desabilitado = ESTADO_SAIDAS.get("Y5", False)
-        driver_habilitado = not driver_desabilitado
-        em_movimento = ESTADO_SAIDAS.get("Y0", False)
-        emergencia_ativa = not ESTADO_ENTRADAS.get("X2", True)
-
-        # Lógica do Motor X
-        if driver_habilitado and not emergencia_ativa:
-            if em_movimento:
-                detalhe["motor_x"] = 35.0  # Em movimento
-            else:
-                detalhe["motor_x"] = 15.0  # Parado com Torque de Retenção (Holding Torque)
-        else:
-            detalhe["motor_x"] = 0.0       # Driver desabilitado ou emergência
-
-        # Solenoides 24V
+        if ESTADO_SAIDAS.get("Y0", False): detalhe["motor_x"] = 35.0
         if ESTADO_SAIDAS.get("Y1", False): detalhe["solenoide_y"] = 4.8
         if ESTADO_SAIDAS.get("Y2", False): detalhe["solenoide_z"] = 4.8
         if ESTADO_SAIDAS.get("Y3", False): detalhe["vacuo"] = 4.8
 
-        # Relés do Módulo 5V
         reles_ativos = sum(1 for y in ["Y0", "Y1", "Y2", "Y3", "Y4", "Y5"] if ESTADO_SAIDAS.get(y, False))
         detalhe["reles"] = round(reles_ativos * 0.5, 1)
 
@@ -156,8 +137,8 @@ def worker_leitura_clp():
     cmd_d200 = criar_comando(b"0119002")
 
     while True:
-        # 1. MODO SIMULAÇÃO
-        if not USAR_CLP_REAL:
+        # 1. MODO SIMULAÇÃO (Inativo se já estiver conectado ao CLP Real)
+        if not USAR_CLP_REAL and STATUS_COMUNICACAO != "CLP_REAL_CONECTADO":
             if ser is not None:
                 try:
                     ser.close()
@@ -384,14 +365,14 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
             except Exception:
                 pass
 
-# 2. Rota de Recepção de Dados Segura (Transmissão Ativa da Bancada Local para a Nuvem)
+        # 2. Rota de Recepção de Dados Segura (Transmissão Ativa da Bancada Local para a Nuvem)
         elif self.path == "/api/atualizar":
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length).decode("utf-8")
             try:
                 dados_recebidos = json.loads(body)
                 with dados_lock:
-                    USAR_CLP_REAL = True  # Força a nuvem a aceitar a leitura física
+                    USAR_CLP_REAL = True
                     
                     if "entradas" in dados_recebidos:
                         ESTADO_ENTRADAS.update(dados_recebidos["entradas"])
@@ -403,7 +384,15 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         POTENCIA_KW = dados_recebidos["potencia_kw"]
                     if "detalhamento_potencia" in dados_recebidos:
                         DETALHAMENTO_POTENCIA.update(dados_recebidos["detalhamento_potencia"])
+                    
                     STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
+
+                # Recalcula a potência com base nas novas saídas recebidas
+                pot_calc, detalhe_calc = calcular_potencia_instantanea()
+                with dados_lock:
+                    if POTENCIA_KW == 0.0 and pot_calc > 0:
+                        POTENCIA_KW = pot_calc
+                        DETALHAMENTO_POTENCIA = detalhe_calc
 
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -412,7 +401,7 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"status": "recebido"}).encode("utf-8"))
                 return
             except Exception as e:
-                print(f"[ERRO] Falha ao processar payload em /api/atualizar: {e}")
+                print(f"[ERRO] Falha em /api/atualizar: {e}")
 
         self.send_response(400)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -445,7 +434,8 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                     "entradas": ESTADO_ENTRADAS,
                     "saidas": ESTADO_SAIDAS,
                     "pressao_bar": VALOR_PRESSAO_BAR,
-                    "potencia_kw": POTENCIA_KW,
+                    "potencia_w": POTENCIA_KW,
+                    "potencia_kw": round(POTENCIA_KW / 1000.0, 4),
                     "detalhamento_potencia": DETALHAMENTO_POTENCIA,
                     "status_comunicacao": STATUS_COMUNICACAO,
                     "usar_clp_real": USAR_CLP_REAL
