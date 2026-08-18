@@ -151,12 +151,7 @@ def worker_leitura_clp():
     cmd_d200 = criar_comando(b"0119002")
 
     while True:
-        if not PYSERIAL_DISPONIVEL:
-            with dados_lock:
-                STATUS_COMUNICACAO = "BIBLIOTECA_SERIAL_NAO_INSTALADA"
-            time.sleep(1)
-            continue
-
+        # 1. MODO SIMULAÇÃO (Executa direto no Render se USAR_CLP_REAL for False)
         if not USAR_CLP_REAL:
             try:
                 segundos = int(time.time())
@@ -164,7 +159,7 @@ def worker_leitura_clp():
                     for i in range(8):
                         ESTADO_ENTRADAS[f"X{i}"] = ((segundos + i) % 5) == 0
                     for i in range(20, 28):
-                        ESTADO_ENTRADAS[f"X{i}"] = ((segundos + i) % 17) == 0
+                        ESTADO_ENTRADAS[f"X{20 + (i-20)}"] = ((segundos + i) % 17) == 0
                     for i in range(8):
                         ESTADO_SAIDAS[f"Y{i}"] = ((segundos + i) % 3) == 0
                     VALOR_PRESSAO_BAR = round((segundos % 100) / 10.0, 2)
@@ -179,6 +174,14 @@ def worker_leitura_clp():
             except Exception:
                 pass
 
+        # 2. VERIFICAÇÃO DE SERIAL (Apenas se USAR_CLP_REAL for True)
+        if not PYSERIAL_DISPONIVEL:
+            with dados_lock:
+                STATUS_COMUNICACAO = "BIBLIOTECA_SERIAL_NAO_INSTALADA"
+            time.sleep(1)
+            continue
+
+        # 3. COMUNICAÇÃO SERIAL REAL COM CLP
         try:
             if ser is None or not ser.is_open:
                 ser = serial.Serial(
@@ -279,7 +282,6 @@ def worker_leitura_clp():
                         except ValueError:
                             pass
 
-            # Atualiza valor estimado da potência
             pot_calc = calcular_potencia_instantanea()
             with dados_lock:
                 POTENCIA_KW = pot_calc
@@ -296,7 +298,6 @@ def worker_leitura_clp():
                 ser = None
 
         time.sleep(0.05)
-
 
 # ==========================================
 # CONSTRUÇÃO DO HTML / THREE.JS / PLOTLY / CHART.JS
