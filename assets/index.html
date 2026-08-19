@@ -15,7 +15,37 @@
 * { box-sizing: border-box; }
 body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #FFFFFF; overflow-x: hidden; }
 .container-principal { display: flex; flex-direction: row; gap: 20px; width: 100%; }
-.cabecalho-industrial { font-size: 1.8rem; font-weight: bold; color: #FF4B4B; text-transform: uppercase; margin-top: 0px; margin-bottom: 12px; letter-spacing: -1px; }
+
+/* Estilização do Novo Cabeçalho com Modo de Operação */
+.cabecalho-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.cabecalho-industrial { 
+  font-size: 1.8rem; 
+  font-weight: bold; 
+  color: #FF4B4B; 
+  text-transform: uppercase; 
+  margin: 0; 
+  letter-spacing: -1px; 
+}
+
+.badge-status {
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.badge-status.status-online { color: #00E676; }
+.badge-status.status-simulacao { color: #FFB300; }
+.badge-status.status-erro { color: #FF1744; }
+
 .menu-lateral { width: 230px; min-width: 230px; background: #F8FAFC; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0; height: fit-content; }
 .menu-lateral h3 { margin-top: 0; font-size: 1.1rem; color: #334155; }
 .btn-menu { display: block; width: 100%; padding: 12px 10px; margin-bottom: 8px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 5px; cursor: pointer; text-align: left; font-weight: bold; color: #475569; font-size: 0.95rem; }
@@ -185,7 +215,8 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   .container-principal { flex-direction: column; gap: 10px; }
   .menu-lateral { width: 100%; min-width: 100%; padding: 10px; }
   .btn-menu { margin-bottom: 5px; padding: 10px; }
-  .cabecalho-industrial { font-size: 1.3rem; margin-bottom: 8px; }
+  .cabecalho-industrial { font-size: 1.3rem; }
+  .badge-status { font-size: 1.2rem; }
   #container-stl-novo { height: 50vh; min-height: 320px; }
   .grid-leds { grid-template-columns: repeat(2, 1fr); }
   .display-digital-sobreposto { font-size: 3rem; }
@@ -196,7 +227,6 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 <body>
 <div class="container-principal">
   <div class="menu-lateral">
-    <!-- Botão de Voltar ao Hub de Projetos -->
     <button class="btn-voltar-hub" onclick="voltarAoHub()">
       ← Voltar ao Hub
     </button>
@@ -209,7 +239,12 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     <button class="btn-menu" onclick="mudarTela('monitor_saidas', this)">Saídas CLP</button>
   </div>
   <div class="conteudo-principal">
-    <div id="cabecalho" class="cabecalho-industrial">MONTAGEM CAD: GANTRY 3D</div>
+    
+    <!-- Estrutura do Novo Cabeçalho Flex -->
+    <div class="cabecalho-container">
+      <div id="cabecalho" class="cabecalho-industrial">DIGITAL TWIN: ROBÔ CARTESIANO</div>
+      <div id="badge-modo-operacao" class="badge-status status-online">ON-LINE</div>
+    </div>
 
     <div id="tela-base_stl_nova" class="tela ativa" style="position: relative;">
       <div id="container-stl-novo"></div>
@@ -687,7 +722,6 @@ function atualizarTelemetria() {
     Plotly.relayout('plotX', { 'xaxis.title.text': textoHorario });
     Plotly.relayout('plotY', { 'xaxis.title.text': textoHorario });
     Plotly.relayout('plotZ', { 'xaxis.title.text': textoHorario });
-
 }
 
 setInterval(atualizarTelemetria, 100);
@@ -876,13 +910,29 @@ function consultarCLP() {
     .then(response => response.json())
     .then(dados => {
         buscandoDados = false;
+
+        // Atualização do Modo de Operação no Cabeçalho
+        const badgeModo = document.getElementById('badge-modo-operacao');
+        const erroConexao = (dados.status_comunicacao === "ERRO_PORTA" || dados.status_comunicacao === "SEM_RESPOSTA_CLP");
+
+        if (badgeModo) {
+            if (erroConexao) {
+                badgeModo.innerText = "FALHA/ERRO";
+                badgeModo.className = "badge-status status-erro";
+            } else if (dados.modo_simulacao) {
+                badgeModo.innerText = "SIMULAÇÃO";
+                badgeModo.className = "badge-status status-simulacao";
+            } else {
+                badgeModo.innerText = "ON-LINE";
+                badgeModo.className = "badge-status status-online";
+            }
+        }
+
         const modoIn = document.getElementById('modo_comunicacao_in');
         const modoOut = document.getElementById('modo_comunicacao_out');
         const txtStatus = "Canal: " + dados.status_comunicacao;
         if (modoIn) modoIn.innerText = txtStatus;
         if (modoOut) modoOut.innerText = txtStatus;
-
-        const erroConexao = (dados.status_comunicacao === "ERRO_PORTA" || dados.status_comunicacao === "SEM_RESPOSTA_CLP");
 
         const vPressao = (dados.pressao_bar !== undefined) ? dados.pressao_bar : 0.0;
         const vPotencia = (dados.potencia_w !== undefined) ? dados.potencia_w : 0.0;
