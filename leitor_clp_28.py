@@ -410,7 +410,8 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 dados_recebidos = json.loads(body)
                 with dados_lock:
                     USAR_CLP_REAL = True
-                    ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Reseta o temporizador de heartbeat
+                    ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Atualiza o timestamp exato do PUSH
+                    STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
                     
                     if "entradas" in dados_recebidos:
                         ESTADO_ENTRADAS.update(dados_recebidos["entradas"])
@@ -422,14 +423,6 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         POTENCIA_KW = dados_recebidos["potencia_kw"]
                     if "detalhamento_potencia" in dados_recebidos:
                         DETALHAMENTO_POTENCIA.update(dados_recebidos["detalhamento_potencia"])
-                    
-                    STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
-
-                pot_calc, detalhe_calc = calcular_potencia_instantanea()
-                with dados_lock:
-                    if POTENCIA_KW == 0.0 and pot_calc > 0:
-                        POTENCIA_KW = pot_calc
-                        DETALHAMENTO_POTENCIA = detalhe_calc
 
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -511,19 +504,25 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Arquivo assets/index.html nao encontrado.")
 
-        # 4. Rota de API JSON para o Front-end (COM TIMEOUT PARA O RENDER)
+        # 4. Rota de API JSON para o Front-end
         elif path in ["/dados", "/dados_clp"]:
             with dados_lock:
-                # Detecta se o código está rodando no Render (nuvem) via variável de ambiente
+                agora = time.time()
                 EH_AMBIENTE_RENDER = os.environ.get("RENDER") is not None
                 
-                tempo_decorrido = time.time() - ULTIMA_ATUALIZACAO_TIMESTAMP
-                
-                # O timeout por falta de PUSH só deve ser aplicado se estiver hospedado no Render
-                if EH_AMBIENTE_RENDER and USAR_CLP_REAL and tempo_decorrido > TIMEOUT_CONEXAO_NUVEM_SEG:
-                    status_envio = "SEM_RESPOSTA_CLP"
-                    modo_real_envio = False
+                # Se estiver no Render:
+                if EH_AMBIENTE_RENDER:
+                    # Se nunca recebeu um PUSH ou se o ultimo PUSH foi ha mais de X segundos
+                    sem_comunicacao = (ULTIMA_ATUALIZACAO_TIMESTAMP == 0.0) or ((agora - ULTIMA_ATUALIZACAO_TIMESTAMP) > TIMEOUT_CONEXAO_NUVEM_SEG)
+                    
+                    if sem_comunicacao:
+                        status_envio = "SEM_RESPOSTA_CLP"
+                        modo_real_envio = False
+                    else:
+                        status_envio = "CLP_REAL_CONECTADO"
+                        modo_real_envio = True
                 else:
+                    # Comportamento Local (Bancada)
                     status_envio = STATUS_COMUNICACAO
                     modo_real_envio = USAR_CLP_REAL
 
