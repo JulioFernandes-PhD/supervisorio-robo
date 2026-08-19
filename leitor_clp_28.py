@@ -510,13 +510,23 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 agora = time.time()
                 EH_AMBIENTE_RENDER = os.environ.get("RENDER") is not None
                 
-                # Se estiver no Render:
+                # Se estiver no Render
                 if EH_AMBIENTE_RENDER:
-                    # Se nunca recebeu um PUSH ou se o ultimo PUSH foi ha mais de X segundos
+                    # Verifica se nunca recebeu dados da bancada ou se estourou o tempo
                     sem_comunicacao = (ULTIMA_ATUALIZACAO_TIMESTAMP == 0.0) or ((agora - ULTIMA_ATUALIZACAO_TIMESTAMP) > TIMEOUT_CONEXAO_NUVEM_SEG)
                     
                     if sem_comunicacao:
-                        status_envio = "SEM_RESPOSTA_CLP"
+                        # Gera valores fictícios no Render para manter a cena 3D/telemetria operando em modo simulação
+                        segundos = int(agora)
+                        for i in range(8):
+                            ESTADO_ENTRADAS[f"X{i}"] = ((segundos + i) % 5) == 0
+                        ESTADO_ENTRADAS["X2"] = True  # Emergência OK
+                        
+                        for i in range(8):
+                            ESTADO_SAIDAS[f"Y{i}"] = ((segundos + i) % 3) == 0
+                            
+                        VALOR_PRESSAO_BAR = round((segundos % 100) / 10.0, 2)
+                        status_envio = "SIMULADOR_ATIVO_OK"
                         modo_real_envio = False
                     else:
                         status_envio = "CLP_REAL_CONECTADO"
