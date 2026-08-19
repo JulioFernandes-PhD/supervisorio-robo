@@ -437,7 +437,9 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
 
-    def do_GET(self):
+def do_GET(self):
+        global ESTADO_ENTRADAS, ESTADO_SAIDAS, VALOR_PRESSAO_BAR
+
         parsed_path = urllib.parse.urlparse(self.path)
         path = parsed_path.path
         query_params = urllib.parse.parse_qs(parsed_path.query)
@@ -458,7 +460,7 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Arquivo assets/login.html nao encontrado.")
 
-        # 2. Rota Hub / Dashboard (Hub de Projetos)
+        # 2. Rota Hub / Dashboard
         elif path in ["/", "/dashboard"]:
             token_url = query_params.get("token", [None])[0]
             if not token_url or token_url not in SESSIONS_ATIVAS:
@@ -510,17 +512,14 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 agora = time.time()
                 EH_AMBIENTE_RENDER = os.environ.get("RENDER") is not None
                 
-                # Se estiver no Render
                 if EH_AMBIENTE_RENDER:
-                    # Verifica se nunca recebeu dados da bancada ou se estourou o tempo
                     sem_comunicacao = (ULTIMA_ATUALIZACAO_TIMESTAMP == 0.0) or ((agora - ULTIMA_ATUALIZACAO_TIMESTAMP) > TIMEOUT_CONEXAO_NUVEM_SEG)
                     
                     if sem_comunicacao:
-                        # Gera valores fictícios no Render para manter a cena 3D/telemetria operando em modo simulação
                         segundos = int(agora)
                         for i in range(8):
                             ESTADO_ENTRADAS[f"X{i}"] = ((segundos + i) % 5) == 0
-                        ESTADO_ENTRADAS["X2"] = True  # Emergência OK
+                        ESTADO_ENTRADAS["X2"] = True
                         
                         for i in range(8):
                             ESTADO_SAIDAS[f"Y{i}"] = ((segundos + i) % 3) == 0
@@ -532,7 +531,6 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         status_envio = "CLP_REAL_CONECTADO"
                         modo_real_envio = True
                 else:
-                    # Comportamento Local (Bancada)
                     status_envio = STATUS_COMUNICACAO
                     modo_real_envio = USAR_CLP_REAL
 
