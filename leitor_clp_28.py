@@ -86,7 +86,7 @@ DETALHAMENTO_POTENCIA = {
     "reles": 0.0
 }
 STATUS_COMUNICACAO = "INICIANDO"
-ULTIMA_ATUALIZACAO_TIMESTAMP = 0.0  # Guarda o relógio do último POST recebido da bancada
+ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Inicia com o horário atual para permitir timeout imediato
 
 # NOMES DOS ARQUIVOS DE MÍDIA / STL
 nome_imagem_parker = "assets/image_e84f27.jpg"
@@ -514,11 +514,13 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
         # 4. Rota de API JSON para o Front-end (COM TIMEOUT PARA O RENDER)
         elif path in ["/dados", "/dados_clp"]:
             with dados_lock:
-                # Verifica se estourou o tempo sem dados da bancada
+                # Detecta se o código está rodando no Render (nuvem) via variável de ambiente
+                EH_AMBIENTE_RENDER = os.environ.get("RENDER") is not None
+                
                 tempo_decorrido = time.time() - ULTIMA_ATUALIZACAO_TIMESTAMP
                 
-                # Se estamos usando CLP real, mas passou do tempo limite e o timestamp já foi inicializado:
-                if USAR_CLP_REAL and ULTIMA_ATUALIZACAO_TIMESTAMP > 0 and tempo_decorrido > TIMEOUT_CONEXAO_NUVEM_SEG:
+                # O timeout por falta de PUSH só deve ser aplicado se estiver hospedado no Render
+                if EH_AMBIENTE_RENDER and USAR_CLP_REAL and tempo_decorrido > TIMEOUT_CONEXAO_NUVEM_SEG:
                     status_envio = "SEM_RESPOSTA_CLP"
                     modo_real_envio = False
                 else:
