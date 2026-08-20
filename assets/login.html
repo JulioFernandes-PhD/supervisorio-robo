@@ -5,65 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito - Control Hub</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+
         body {
-            background: #0d1117;
             color: #c9d1d9;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 50%, #161b22 0%, #0d1117 100%);
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(rgba(13, 17, 23, 0.45), rgba(13, 17, 23, 0.55)), 
+                        url('/assets/bg-supervisorio.jpg') no-repeat center center fixed;
+            background-size: cover;
         }
+
+        /* Área de emissão alinhada com a tela do monitor */
+        #particles-js {
+            position: absolute;
+            width: 80%;          /* Cobre do monitor até a ponta esquerda */
+            height: 85%;         /* Cobre a trajetória vertical dos feixes */
+            top: 5%;             /* Inicia no nível superior da tela do monitor */
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Card estilo Glassmorphism */
         .login-card {
-            background: #161b22;
-            border: 1px solid #30363d;
+            position: relative;
+            z-index: 2;
+            background: rgba(18, 24, 38, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
             border-top: 4px solid #00f2fe;
             border-radius: 12px;
             padding: 40px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7),
+                        0 0 20px rgba(0, 242, 254, 0.15);
         }
+
         .logo-area { text-align: center; margin-bottom: 30px; }
-        .logo-area h2 { font-size: 1.5rem; color: #f0f6fc; font-weight: 600; letter-spacing: 1px; }
+        .logo-area h2 { 
+            font-size: 1.5rem; 
+            color: #f0f6fc; 
+            font-weight: 600; 
+            letter-spacing: 1.5px; 
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
         .logo-area p { font-size: 0.85rem; color: #8b949e; margin-top: 5px; }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 8px; font-weight: 500; }
+
         input {
             width: 100%;
             padding: 12px 15px;
-            background: #0d1117;
-            border: 1px solid #30363d;
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid rgba(48, 54, 61, 0.8);
             border-radius: 6px;
             color: #fff;
             font-size: 1rem;
             outline: none;
             transition: all 0.3s;
         }
-        input:focus { border-color: #00f2fe; box-shadow: 0 0 8px rgba(0,242,254,0.3); }
+
+        input:focus { 
+            border-color: #00f2fe; 
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); 
+            background: rgba(13, 17, 23, 0.95);
+        }
+
         .btn-login {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+            background: linear-gradient(135deg, #0052d4, #4364f7, #00f2fe);
             border: none;
             border-radius: 6px;
             color: #fff;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.3s ease;
             margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 82, 212, 0.4);
         }
-        .btn-login:hover { opacity: 0.9; }
+
+        .btn-login:hover { 
+            opacity: 0.95; 
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+            transform: translateY(-1px);
+        }
+
         .error-msg { color: #ff7b72; font-size: 0.85rem; text-align: center; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
+
     <div class="login-card">
         <div class="logo-area">
-            <h2>SUPERVISÓRIO CLP</h2>
-            <p>Projetos - Automação Industrial</p>
+            <h>PROJETOS DE AUTOMAÇÃO</h>
+            <p>Dr. Júlio César M. Fernandes</p>
         </div>
         <form id="formLogin">
             <div class="form-group">
@@ -79,7 +131,70 @@
         </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 130,
+                    "density": { "enable": true, "value_area": 500 }
+                },
+                "color": { "value": ["#00f2fe", "#00d2ff", "#ffffff"] },
+                "shape": { "type": "circle" },
+                /* Animação de acender/apagar ativa */
+                "opacity": {
+                    "value": 0.85,
+                    "random": true,
+                    "anim": { 
+                        "enable": true, 
+                        "speed": 2, 
+                        "opacity_min": 0.05, 
+                        "sync": false 
+                    }
+                },
+                "size": {
+                    "value": 4.5,
+                    "random": true,
+                    "anim": { 
+                        "enable": true, 
+                        "speed": 2, 
+                        "size_min": 0.5, 
+                        "sync": false 
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 110,
+                    "color": "#00f2fe",
+                    "opacity": 0.2,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.4,             /* Velocidade reduzida para um movimento mais cadenciado */
+                    "direction": "top-left",  /* Direção: Subindo na diagonal em direção ao canto superior esquerdo */
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "bubble" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "bubble": { "distance": 180, "size": 6, "duration": 2, "opacity": 1 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
             const usuario = document.getElementById('usuario').value;
