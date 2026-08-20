@@ -91,6 +91,7 @@ ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Inicia com o horário atual para p
 # NOMES DOS ARQUIVOS DE MÍDIA / STL
 nome_imagem_parker = "assets/image_e84f27.jpg"
 nome_imagem_ipega = "assets/controle_ipega.jpg"
+nome_imagem_bg = "assets/bg-supervisorio.jpg"     # Imagem de Fundo da Tela
 nome_stl_base = "assets/MONTAGEM_BASE.stl"
 nome_stl_carro_x = "assets/MONTAGEM_CARRO_X.stl"
 nome_stl_carro_y = "assets/MONTAGEM_CARRO_Y.stl"
@@ -410,99 +411,6 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 dados_recebidos = json.loads(body)
                 with dados_lock:
                     USAR_CLP_REAL = True
-                    ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Atualiza o timestamp exato do PUSH
-                    STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
-                    
-                    if "entradas" in dados_recebidos:
-                        ESTADO_ENTRADAS.update(dados_recebidos["entradas"])
-                    if "saidas" in dados_recebidos:
-                        ESTADO_SAIDAS.update(dados_recebidos["saidas"])
-                    if "pressao_bar" in dados_recebidos:
-                        VALOR_PRESSAO_BAR = dados_recebidos["pressao_bar"]
-                    if "potencia_kw" in dados_recebidos:
-                        POTENCIA_KW = dados_recebidos["potencia_kw"]
-                    if "detalhamento_potencia" in dados_recebidos:
-                        DETALHAMENTO_POTENCIA.update(dados_recebidos["detalhamento_potencia"])
-
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                self.wfile.write(json.dumps({"status": "recebido"}).encode("utf-8"))
-                return
-            except Exception as e:
-                print(f"[ERRO] Falha em /api/atualizar: {e}")
-
-        self.send_response(400)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-
-class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
-    def log_message(self, format, *args):
-        return
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        self.end_headers()
-
-    def do_POST(self):
-        global USAR_CLP_REAL, ESTADO_ENTRADAS, ESTADO_SAIDAS, VALOR_PRESSAO_BAR, POTENCIA_KW, DETALHAMENTO_POTENCIA, STATUS_COMUNICACAO, ULTIMA_ATUALIZACAO_TIMESTAMP
-        
-        # 1. Rota de Autenticação / Login
-        if self.path == "/api/login":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            try:
-                dados = json.loads(body)
-                if dados.get("usuario") == USUARIO_ADMIN and dados.get("senha") == SENHA_ADMIN:
-                    novo_token = str(uuid.uuid4())
-                    SESSIONS_ATIVAS.add(novo_token)
-                    
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.send_header("Access-Control-Allow-Origin", "*")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"status": "sucesso", "token": novo_token}).encode("utf-8"))
-                    return
-                else:
-                    self.send_response(401)
-                    self.send_header("Content-Type", "application/json")
-                    self.send_header("Access-Control-Allow-Origin", "*")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"status": "erro", "mensagem": "Credenciais invalidas"}).encode("utf-8"))
-                    return
-            except Exception as e:
-                print(f"[ERRO] Falha no endpoint /api/login: {e}")
-
-        # 2. Rota para alternar modo de simulação
-        elif self.path == "/toggle_modo":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            try:
-                dados = json.loads(body)
-                if "usar_clp_real" in dados:
-                    USAR_CLP_REAL = bool(dados["usar_clp_real"])
-                    print(f"\n[SISTEMA] Modo alterado -> CLP Real: {USAR_CLP_REAL}")
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.send_header("Access-Control-Allow-Origin", "*")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"status": "ok", "usar_clp_real": USAR_CLP_REAL}).encode("utf-8"))
-                    return
-            except Exception:
-                pass
-
-        # 3. Rota de Recepção de Dados Segura (Chamada na Nuvem/Render)
-        elif self.path == "/api/atualizar":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            try:
-                dados_recebidos = json.loads(body)
-                with dados_lock:
-                    USAR_CLP_REAL = True
                     ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()
                     STATUS_COMUNICACAO = "CLP_REAL_CONECTADO"
                     
@@ -651,14 +559,16 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 if file_path.endswith(".stl"):
                     self.send_header("Content-Type", "model/stl")
-                elif file_path.endswith(".jpg") or file_path.endswith(".jpeg"):
+                elif file_path.endswith((".jpg", ".jpeg")):
                     self.send_header("Content-Type", "image/jpeg")
                 elif file_path.endswith(".png"):
                     self.send_header("Content-Type", "image/png")
                 else:
                     self.send_header("Content-Type", "application/octet-stream")
+                
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
+                
                 with open(file_path, "rb") as f:
                     self.wfile.write(f.read())
             else:
