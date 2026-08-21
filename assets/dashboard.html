@@ -5,92 +5,204 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hub de Projetos - Julio Fernandes</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+
         body {
-            background: #0d1117;
             color: #c9d1d9;
             min-height: 100vh;
             padding: 30px;
-            background-image: radial-gradient(circle at 50% 0%, #161b22 0%, #0d1117 100%);
+            background-color: #0d1117;
+            background-image: linear-gradient(rgba(13, 17, 23, 0.55), rgba(13, 17, 23, 0.65)), url('assets/bg-supervisorio.webp');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+            
+            /* Carregamento fluido sem piscar a tela */
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
         }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
         header {
+            position: relative;
+            z-index: 2;
             display: flex;
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
             margin: 0 auto 40px auto;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #30363d;
+            padding: 20px 25px;
+            background: rgba(18, 24, 38, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
-        .brand h1 { font-size: 1.6rem; color: #f0f6fc; }
-        .brand p { font-size: 0.85rem; color: #8b949e; }
+
+        .brand h1 { 
+            font-size: 1.6rem; 
+            color: #f0f6fc; 
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+        .brand p { font-size: 0.85rem; color: #8b949e; margin-top: 3px; }
+
+        /* Estilo para a descrição e resumo do Hub */
+        .brand-description {
+            font-size: 0.8rem !important;
+            color: #8b949e;
+            margin-top: 6px !important;
+            max-width: 650px;
+            line-height: 1.4;
+            opacity: 0.85;
+        }
+
         .btn-logout {
-            padding: 8px 16px;
-            background: #21262d;
-            border: 1px solid #30363d;
+            padding: 9px 18px;
+            background: rgba(255, 123, 114, 0.1);
+            border: 1px solid rgba(ff, 123, 114, 0.4);
             color: #ff7b72;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
-        .btn-logout:hover { background: #30363d; }
+        .btn-logout:hover { 
+            background: rgba(255, 123, 114, 0.25); 
+            box-shadow: 0 0 12px rgba(255, 123, 114, 0.3);
+            transform: translateY(-1px);
+        }
         
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
         .grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
             max-width: 1200px;
             margin: 0 auto;
         }
+
+        /* CARDS COM MAIOR TRANSPARÊNCIA E GLASSMORPHISM */
         .card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 25px;
-            transition: all 0.3s ease;
+            background: rgba(18, 24, 38, 0.25); 
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 14px;
+            padding: 28px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                        box-shadow 0.35s ease, 
+                        border-color 0.35s ease,
+                        background 0.35s ease;
         }
+
+        /* Ao passar o mouse, ele fecha um pouco a cor para dar destaque */
         .card:hover {
-            transform: translateY(-5px);
-            border-color: #00f2fe;
-            box-shadow: 0 10px 30px rgba(0,242,254,0.15);
+            background: rgba(18, 24, 38, 0.65);
+            transform: translateY(-12px) scale(1.03);
+            border-color: rgba(0, 242, 254, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                        0 0 20px rgba(0, 242, 254, 0.25);
         }
+
         .card-tag {
             align-self: flex-start;
-            padding: 4px 10px;
-            font-size: 0.75rem;
+            padding: 5px 12px;
+            font-size: 0.72rem;
             border-radius: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            margin-bottom: 18px;
         }
-        .tag-ativo { background: rgba(46, 160, 67, 0.2); color: #3fb950; border: 1px solid #2ea043; }
-        .tag-breve { background: rgba(210, 153, 34, 0.2); color: #d29922; border: 1px solid #d29922; }
-        .card h3 { font-size: 1.25rem; color: #f0f6fc; margin-bottom: 10px; }
-        .card p { font-size: 0.9rem; color: #8b949e; line-height: 1.4; margin-bottom: 20px; }
+        .tag-ativo { 
+            background: rgba(46, 160, 67, 0.18); 
+            color: #3fb950; 
+            border: 1px solid rgba(63, 185, 80, 0.5); 
+            box-shadow: 0 0 8px rgba(63, 185, 80, 0.2);
+        }
+        .tag-breve { 
+            background: rgba(210, 153, 34, 0.18); 
+            color: #d29922; 
+            border: 1px solid rgba(210, 153, 34, 0.5); 
+        }
+
+        .card h3 { font-size: 1.3rem; color: #f0f6fc; margin-bottom: 12px; font-weight: 600; }
+        .card p { font-size: 0.9rem; color: #8b949e; line-height: 1.5; margin-bottom: 25px; }
+
         .btn-acessar {
             width: 100%;
-            padding: 10px;
-            background: #238636;
+            padding: 12px;
+            background: linear-gradient(135deg, #238636, #2ea043);
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
             display: block;
+            box-shadow: 0 4px 15px rgba(35, 134, 54, 0.3);
+            transition: all 0.3s ease;
         }
-        .btn-acessar:hover { background: #2ea043; }
-        .btn-disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+        .btn-acessar:hover { 
+            background: linear-gradient(135deg, #2ea043, #3fb950);
+            box-shadow: 0 6px 20px rgba(63, 185, 80, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-disabled { 
+            background: rgba(33, 38, 45, 0.8) !important; 
+            color: #484f58 !important; 
+            cursor: not-allowed !important; 
+            box-shadow: none !important;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            transform: none !important;
+        }
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
+
     <header>
         <div class="brand">
             <h1>Sistemas de Supervisão</h1>
             <p>Hub de Projetos - Julio Fernandes</p>
+            <p class="brand-description">
+                Ambiente centralizado para demonstração, monitoramento em tempo real e divulgação de projetos de automação industrial, controle e sistemas supervisórios.
+            </p>
         </div>
         <button class="btn-logout" onclick="logout()">Sair</button>
     </header>
@@ -127,7 +239,29 @@
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <script>
+        // Revelação suave do body após o carregamento
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+
+        // Configuração leve de partículas de fundo
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": ["#00f2fe", "#ffffff"] },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.4, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 130, "color": "#00f2fe", "opacity": 0.15, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "top-left", "random": true, "out_mode": "out" }
+            },
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "bubble" } } },
+            "retina_detect": true
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token') || localStorage.getItem('auth_token');
 
