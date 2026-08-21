@@ -91,7 +91,7 @@ ULTIMA_ATUALIZACAO_TIMESTAMP = time.time()  # Inicia com o horário atual para p
 # NOMES DOS ARQUIVOS DE MÍDIA / STL
 nome_imagem_parker = "assets/image_e84f27.jpg"
 nome_imagem_ipega = "assets/controle_ipega.jpg"
-nome_imagem_bg = "assets/bg-supervisorio.jpg"     # Imagem de Fundo da Tela
+nome_imagem_bg = "assets/bg-supervisorio.webp"     # Imagem de Fundo da Tela
 nome_stl_base = "assets/MONTAGEM_BASE.stl"
 nome_stl_carro_x = "assets/MONTAGEM_CARRO_X.stl"
 nome_stl_carro_y = "assets/MONTAGEM_CARRO_Y.stl"
