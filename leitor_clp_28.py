@@ -1,6 +1,7 @@
 import gc
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import mimetypes
 import os
 import socket
 import sys
@@ -552,17 +553,20 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(payload).encode("utf-8"))
 
-        # 5. Servir arquivos estáticos (STL e Imagens)
+        # 5. Servir arquivos estáticos (STL, WebP, JPG, PNG e outros da pasta assets)
         elif path.startswith("/assets/"):
             file_path = path.lstrip("/")
             if os.path.exists(file_path):
                 self.send_response(200)
+                
+                # Identifica o MIME type automaticamente (suporte nativo para .webp, .jpg, .png, etc.)
+                tipo_mime, _ = mimetypes.guess_type(file_path)
                 if file_path.endswith(".stl"):
                     self.send_header("Content-Type", "model/stl")
-                elif file_path.endswith((".jpg", ".jpeg")):
-                    self.send_header("Content-Type", "image/jpeg")
-                elif file_path.endswith(".png"):
-                    self.send_header("Content-Type", "image/png")
+                elif file_path.endswith(".webp"):
+                    self.send_header("Content-Type", "image/webp")
+                elif tipo_mime:
+                    self.send_header("Content-Type", tipo_mime)
                 else:
                     self.send_header("Content-Type", "application/octet-stream")
                 
