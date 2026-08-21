@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito - Control Hub</title>
+
+    <!-- Preload atualizado apontando para a pasta /assets/ -->
+    <!--<link rel="preload" href="/assets/bg-supervisorio.webp" as="image" type="image/webp"> -->
+
     <style>
         * { 
             box-sizing: border-box; 
@@ -20,23 +24,23 @@
             min-height: 100vh;
             overflow: hidden;
             position: relative;
-            background: linear-gradient(rgba(13, 17, 23, 0.45), rgba(13, 17, 23, 0.55)), 
-                        url('/assets/bg-supervisorio.jpg') no-repeat center center fixed;
+            background-color: #0d1117;
+            background-image: linear-gradient(rgba(13, 17, 23, 0.45), rgba(13, 17, 23, 0.55)), url('assets/bg-supervisorio.webp');
+            background-repeat: no-repeat;
+            background-position: center center;
             background-size: cover;
         }
 
-        /* Área de emissão alinhada com a tela do monitor */
         #particles-js {
             position: absolute;
-            width: 80%;          /* Cobre do monitor até a ponta esquerda */
-            height: 85%;         /* Cobre a trajetória vertical dos feixes */
-            top: 5%;             /* Inicia no nível superior da tela do monitor */
+            width: 80%;
+            height: 85%;
+            top: 5%;
             left: 0;
             z-index: 1;
             pointer-events: none;
         }
 
-        /* Card estilo Glassmorphism */
         .login-card {
             position: relative;
             z-index: 2;
@@ -51,6 +55,18 @@
             max-width: 400px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7),
                         0 0 20px rgba(0, 242, 254, 0.15);
+            animation: fadeInCard 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo-area { text-align: center; margin-bottom: 30px; }
@@ -114,7 +130,7 @@
 
     <div class="login-card">
         <div class="logo-area">
-            <h>PROJETOS DE AUTOMAÇÃO</h>
+            <h2>PROJETOS DE AUTOMAÇÃO</h2>
             <p>Dr. Júlio César M. Fernandes</p>
         </div>
         <form id="formLogin">
@@ -142,7 +158,6 @@
                 },
                 "color": { "value": ["#00f2fe", "#00d2ff", "#ffffff"] },
                 "shape": { "type": "circle" },
-                /* Animação de acender/apagar ativa */
                 "opacity": {
                     "value": 0.85,
                     "random": true,
@@ -172,8 +187,8 @@
                 },
                 "move": {
                     "enable": true,
-                    "speed": 1.4,             /* Velocidade reduzida para um movimento mais cadenciado */
-                    "direction": "top-left",  /* Direção: Subindo na diagonal em direção ao canto superior esquerdo */
+                    "speed": 1.4,
+                    "direction": "top-left",
                     "random": true,
                     "straight": false,
                     "out_mode": "out",
