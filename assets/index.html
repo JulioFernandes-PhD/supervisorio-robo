@@ -742,10 +742,15 @@ function animateThreeJS() {
         deslocamentoAtualZ = alvoZ;
     }
 
-    if (y0Ligado && y4Ligado) {
-        alvoX = cursoMaximoX; 
-    } else if (y0Ligado && !y4Ligado) {
-        alvoX = 0;            
+    // Lógica do Eixo X ajustada para permitir avanço, recuo e paradas no curso total sem travar
+    if (y0Ligado) {
+        if (y4Ligado) {
+            alvoX = cursoMaximoX; // Avanço
+        } else {
+            alvoX = 0;            // Recuo
+        }
+    } else {
+        alvoX = deslocamentoAtualX; // Mantém a posição atual caso o pulso Y0 desligue
     }
 
     if (Math.abs(alvoX - deslocamentoAtualX) > velocidadeX) {
