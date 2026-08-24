@@ -568,8 +568,8 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                     if sem_comunicacao:
                         segundos = int(agora)
                         
-                        for i in range(8):
-                        ESTADO_SAIDAS[f"Y{i}"] = False
+                    for i in range(8):
+                    ESTADO_SAIDAS[f"Y{i}"] = False
 
                     # 2. Descobrir a posição atual dentro do ciclo de 49 segundos
                     tempo_ciclo = segundos % 49
