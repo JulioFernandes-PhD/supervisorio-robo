@@ -45,7 +45,7 @@ BAUDRATE = 38400
 DATA_BITS = 7
 PARIDADE = "E"
 STOP_BITS = 1
-USAR_CLP_REAL = False
+USAR_CLP_REAL = True
 
 # URL do seu serviço hospedado no Render
 URL_RENDER = "https://supervisorio-robo.onrender.com/api/atualizar"
