@@ -45,7 +45,7 @@ BAUDRATE = 38400
 DATA_BITS = 7
 PARIDADE = "E"
 STOP_BITS = 1
-USAR_CLP_REAL = True
+USAR_CLP_REAL = False
 
 # URL do seu serviço hospedado no Render
 URL_RENDER = "https://supervisorio-robo.onrender.com/api/atualizar"
@@ -567,63 +567,12 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                     
                     if sem_comunicacao:
                         segundos = int(agora)
+                        for i in range(8):
+                            ESTADO_ENTRADAS[f"X{i}"] = ((segundos + i) % 5) == 0
+                        ESTADO_ENTRADAS["X2"] = True
                         
-                    for i in range(8):
-                        ESTADO_SAIDAS[f"Y{i}"] = False
-
-                    # 2. Descobrir a posição atual dentro do ciclo de 49 segundos
-                    tempo_ciclo = segundos % 49
-
-                    # PASSO 1 (0s até 10s): Ligar Y0 e Y4 (Avança X até a posição A)
-                    if 0 <= tempo_ciclo < 10:
-                        ESTADO_SAIDAS["Y0"] = True
-                        ESTADO_SAIDAS["Y4"] = True
-
-                    # PASSO 2 (10s até 13s): Ligar Y2 (Desce eixo Z)
-                    elif 10 <= tempo_ciclo < 13:
-                        ESTADO_SAIDAS["Y2"] = True
-
-                    # PASSO 3 (13s até 23s): Ligar Y3 (Ativa vácuo/garra para pegar a peça)
-                    elif 13 <= tempo_ciclo < 23:
-                        ESTADO_SAIDAS["Y3"] = True
-                        ESTADO_ENTRADAS["X25"] = True  # Vacuostato confirma que pegou a peça
-
-                    # PASSO 4 (23s até 23s - transição): Sobe Z (Y2 desliga automaticamente)
-                                            
-                    # PASSO 5 (23s até 33s): Ligar Y0, Y1, Y4 (Vai para posição D: avança Y mantendo vácuo Y3)
-                    elif 23 <= tempo_ciclo < 33:
-                        ESTADO_SAIDAS["Y0"] = True
-                        ESTADO_SAIDAS["Y1"] = True
-                        #ESTADO_SAIDAS["Y4"] = True
-                        ESTADO_SAIDAS["Y3"] = True  # Mantém peça presa durante o transporte
-                        ESTADO_ENTRADAS["X23"] = True
-                        
-    # PASSO 6 (33s até 36s): Ligar Y2 (Desce eixo Z na Posição D)
-                    elif 36 <= tempo_ciclo < 39:
-                        ESTADO_SAIDAS["Y1"] = True  # Mantém Y posicionado
-                        ESTADO_SAIDAS["Y2"] = True  # Desce Z
-                        ESTADO_SAIDAS["Y3"] = True  # Mantém peça presa
-                        ESTADO_ENTRADAS["X23"] = True
-                        ESTADO_ENTRADAS["X24"] = True
-    
-    # PASSO 7 (39s até 42s): Desliga Y3 (Solta a peça na posição D)
-                    elif 39 <= tempo_ciclo < 42:
-                        ESTADO_SAIDAS["Y1"] = True
-                        ESTADO_SAIDAS["Y2"] = True
-                        ESTADO_ENTRADAS["X23"] = True
-                        ESTADO_ENTRADAS["X24"] = True
-                        # Y3 fica False
-
-    # PASSO 8 (42s até 45s): Desliga Y2 (Sobe Z sem a peça)
-                    elif 42 <= tempo_ciclo < 45:
-                        ESTADO_SAIDAS["Y1"] = True
-                        ESTADO_ENTRADAS["X23"] = True
-                        # Y2 e Y3 ficam False
-
-    # PASSO 9 (45s até 49s): Desliga Y1 (Retorna Y para a origem A)
-                    elif 45 <= tempo_ciclo < 49:
-                        # Todas as saídas desligadas (Y1 desativa para retornar)
-                        pass
+                        for i in range(8):
+                            ESTADO_SAIDAS[f"Y{i}"] = ((segundos + i) % 3) == 0
                             
                         VALOR_PRESSAO_BAR = round((segundos % 100) / 10.0, 2)
                         status_envio = "SIMULADOR_ATIVO_OK"
