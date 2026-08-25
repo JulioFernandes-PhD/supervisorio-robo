@@ -76,6 +76,44 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 .tela { display: none; width: 100%; }
 .tela.ativa { display: block; }
 #container-stl-novo { width: 100%; height: 82vh; min-height: 550px; background-color: #0f172a; border-radius: 8px; border: 1px solid #1e293b; position: relative; overflow: hidden; touch-action: none; }
+
+/* Barra de Ferramentas CAD 3D Flutuante */
+.toolbar-vistas-3d {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 20;
+  display: flex;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-vista-cad {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-vista-cad:hover {
+  background: #38bdf8;
+  color: #0f172a;
+  border-color: #38bdf8;
+}
+
 .grid-telemetria { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
 .card-grafico { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 5px; overflow: hidden; }
 .wrapper-manometro-real { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
@@ -221,6 +259,8 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   .grid-leds { grid-template-columns: repeat(2, 1fr); }
   .display-digital-sobreposto { font-size: 3rem; }
   .painel-custo-energia { flex-direction: column; gap: 10px; }
+  .toolbar-vistas-3d { top: 10px; right: 10px; padding: 4px; gap: 4px; }
+  .btn-vista-cad { padding: 4px 6px; font-size: 0.7rem; }
 }
 </style>
 </head>
@@ -249,6 +289,15 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     </div>
 
     <div id="tela-base_stl_nova" class="tela ativa" style="position: relative;">
+      <!-- Barra de Controle de Vista CAD Flutuante -->
+      <div class="toolbar-vistas-3d">
+        <button class="btn-vista-cad" onclick="definirVistaCAD('isometrica')" title="Vista Isométrica">🧊 ISO</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('frente')" title="Vista Frontal">👁️ FRENTE</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('traseira')" title="Vista Traseira">🔙 TRASEIRA</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('topo')" title="Vista Superior">🔝 TOPO</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('lado')" title="Vista Lateral Direita">🔲 LADO 1</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('lado2')" title="Vista Lateral Esquerda">🔲 LADO 2</button>
+      </div>
       <div id="container-stl-novo"></div>
     </div>
 
@@ -635,16 +684,28 @@ const labelX = criarRotuloTexto('X', '#4488FF');
 labelX.position.set(posX, posY, posZ + tamanhoEixo + 30);
 scene.add(labelX);
 
+// FUNÇÃO AUXILIAR PARA ADICIONAR BORDAS ESTILO CAD (SHADED WITH EDGES)
+function adicionarBordasAoModelo(mesh, corBorda = 0x1e293b, anguloDegrau = 30) {
+    const edgesGeometry = new THREE.EdgesGeometry(mesh.geometry, anguloDegrau);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: corBorda, linewidth: 1 });
+    const lineSegments = new THREE.LineSegments(edgesGeometry, lineMaterial);
+    mesh.add(lineSegments);
+}
+
 const gantryGroup = new THREE.Group();
 scene.add(gantryGroup);
 
 let meshBase = null, meshCarrox = null, meshCarroY = null, meshCarroz = null;
+let centroModelo = new THREE.Vector3(0, 250, 0);
 
 const loaderBase = new THREE.STLLoader();
 loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     const materialBase = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.7 });
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
+    
+    // Bordas para a Base (Tom cinza escuro)
+    adicionarBordasAoModelo(meshBase, 0x334155, 30);
     gantryGroup.add(meshBase);
 
     const loaderCarroX = new THREE.STLLoader();
@@ -652,6 +713,10 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
         const materialCarroX = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, metalness: 0.8 });
         geometryCarroX.computeVertexNormals();
         meshCarrox = new THREE.Mesh(geometryCarroX, materialCarroX);
+        
+        // Bordas para o Carro X (Tom azul escuro)
+        adicionarBordasAoModelo(meshCarrox, 0x0284c7, 30);
+
         meshCarrox.position.x += -12;
         meshCarrox.position.y += 203;
         meshCarrox.position.z += 0;
@@ -662,6 +727,10 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
             const materialCarroY = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.2, metalness: 0.8 });
             geometryCarroY.computeVertexNormals();
             meshCarroY = new THREE.Mesh(geometryCarroY, materialCarroY);
+            
+            // Bordas para o Carro Y (Tom verde escuro)
+            adicionarBordasAoModelo(meshCarroY, 0x047857, 30);
+
             meshCarroY.position.x += 100;
             meshCarroY.position.y += 472;
             meshCarroY.position.z += 44;
@@ -675,6 +744,10 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
                 const materialCarroz = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.8 });
                 geometryCarroz.computeVertexNormals();
                 meshCarroz = new THREE.Mesh(geometryCarroz, materialCarroz);
+                
+                // Bordas para o Carro Z (Tom âmbar/laranja escuro)
+                adicionarBordasAoModelo(meshCarroz, 0xb45309, 30);
+
                 meshCarroz.position.x += 180;
                 meshCarroz.position.y += 440;
                 meshCarroz.position.z += 182;
@@ -689,12 +762,44 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
                 gantryGroup.position.x -= center.x;
                 gantryGroup.position.z -= center.z;
                 gantryGroup.position.y = -box.min.y;
-                controls.target.set(0, size.y / 2, 0);
+                
+                centroModelo.set(0, size.y / 2, 0);
+                controls.target.copy(centroModelo);
                 controls.update();
             });
         });
     });
 });
+
+// FUNÇÃO DE AUTO AJUSTE DE VISTAS CAD
+function definirVistaCAD(tipoVista) {
+    const dist = 2200; 
+    const alvo = centroModelo; 
+    
+    switch(tipoVista) {
+        case 'isometrica':
+            camera.position.set(1380, 1280, 1450);
+            break;
+        case 'frente':
+            camera.position.set(0, alvo.y, dist);
+            break;
+        case 'traseira':
+            camera.position.set(0, alvo.y, -dist);
+            break;
+        case 'topo':
+            camera.position.set(0, dist + alvo.y, 0.1); 
+            break;
+        case 'lado':
+            camera.position.set(dist, alvo.y, 0);
+            break;
+        case 'lado2':
+            camera.position.set(-dist, alvo.y, 0);
+            break;
+    }
+    
+    controls.target.copy(alvo);
+    controls.update();
+}
 
 let deslocamentoAtualZ = 0; 
 const cursoMaximoZ = 155; 
@@ -742,15 +847,10 @@ function animateThreeJS() {
         deslocamentoAtualZ = alvoZ;
     }
 
-    // Lógica do Eixo X ajustada para permitir avanço, recuo e paradas no curso total sem travar
-    if (y0Ligado) {
-        if (y4Ligado) {
-            alvoX = cursoMaximoX; // Avanço
-        } else {
-            alvoX = 0;            // Recuo
-        }
-    } else {
-        alvoX = deslocamentoAtualX; // Mantém a posição atual caso o pulso Y0 desligue
+    if (y0Ligado && y4Ligado) {
+        alvoX = cursoMaximoX; 
+    } else if (y0Ligado && !y4Ligado) {
+        alvoX = 0;            
     }
 
     if (Math.abs(alvoX - deslocamentoAtualX) > velocidadeX) {
