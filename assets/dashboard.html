@@ -269,14 +269,20 @@
             window.location.href = '/login';
         }
 
-        function abrirProjeto(rota) {
-            window.location.href = `${rota}?token=${token}`;
-        }
+function abrirProjeto(rota) {
+    document.body.classList.remove('loaded');
+    setTimeout(() => {
+        window.location.href = `${rota}?token=${token}`;
+    }, 350);
+}
 
-        function logout() {
-            localStorage.removeItem('auth_token');
-            window.location.href = '/login';
-        }
+function logout() {
+    localStorage.removeItem('auth_token');
+    document.body.classList.remove('loaded');
+    setTimeout(() => {
+        window.location.href = '/login';
+    }, 350);
+}
     </script>
 </body>
 </html>

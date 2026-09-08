@@ -221,31 +221,37 @@
             "retina_detect": true
         });
 
-        document.getElementById('formLogin').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const usuario = document.getElementById('usuario').value;
-            const senha = document.getElementById('senha').value;
-            const msgErro = document.getElementById('erro');
+document.getElementById('formLogin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const usuario = document.getElementById('usuario').value;
+    const senha = document.getElementById('senha').value;
+    const msgErro = document.getElementById('erro');
 
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario, senha })
-                });
-
-                const data = await res.json();
-                if (res.ok && data.token) {
-                    localStorage.setItem('auth_token', data.token);
-                    window.location.href = '/dashboard?token=' + data.token;
-                } else {
-                    msgErro.style.display = 'block';
-                }
-            } catch (err) {
-                msgErro.textContent = "Erro ao conectar com o servidor.";
-                msgErro.style.display = 'block';
-            }
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, senha })
         });
+
+        const data = await res.json();
+        if (res.ok && data.token) {
+            localStorage.setItem('auth_token', data.token);
+            
+            // Transição suave de saída
+            document.body.classList.remove('loaded');
+            setTimeout(() => {
+                window.location.href = '/dashboard?token=' + data.token;
+            }, 350);
+
+        } else {
+            msgErro.style.display = 'block';
+        }
+    } catch (err) {
+        msgErro.textContent = "Erro ao conectar com o servidor.";
+        msgErro.style.display = 'block';
+    }
+});
     </script>
 </body>
 </html>
