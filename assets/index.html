@@ -115,12 +115,13 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 .grid-telemetria { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
 .card-grafico { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 5px; overflow: hidden; }
 
+/* ESTILOS DA BARRA VISUAL DE PRESSÃO */
 .container-flex-pressao {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 30px;
+  gap: 20px;
   width: 100%;
 }
 
@@ -142,6 +143,46 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   color: #ff1e1e; 
   font-size: 4.6rem; 
   text-shadow: 0 0 5px rgba(255, 30, 30, 0.85); 
+}
+
+.barra-pressao-container {
+  width: 35px;
+  height: 800px;
+  background: #e2e8f0;
+  border: 2px solid #94a3b8;
+  border-radius: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.barra-pressao-nivel {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(0deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+  transition: height 0.15s ease-out;
+}
+
+.painel-controles-limites {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.grupo-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #334155;
 }
 
 .painel-direita-pressao {
@@ -598,7 +639,24 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
           <div id="valor-display-real" class="display-digital-sobreposto">0.00</div>
         </div>
 
+        <!-- ELEMENTO VISUAL DA BARRA DE NÍVEL DE PRESSÃO -->
+        <div class="barra-pressao-container" title="Nível de Pressão">
+          <div id="barra-pressao-nivel" class="barra-pressao-nivel"></div>
+        </div>
+
         <div class="painel-direita-pressao">
+          <!-- PAINEL DE AJUSTE DINÂMICO DE LIMITES (SLIDERS) -->
+          <div class="painel-controles-limites">
+            <div class="grupo-slider">
+              <label for="slider-limite-baixo">Limite Inferior (BAIXA): <span id="txt-limite-baixo" style="color: #f59e0b;">1.00</span> bar</label>
+              <input type="range" id="slider-limite-baixo" min="0" max="5" step="0.1" value="1.0" oninput="atualizarLimitesPressao()">
+            </div>
+            <div class="grupo-slider">
+              <label for="slider-limite-alto">Limite Superior (ALTA): <span id="txt-limite-alto" style="color: #ef4444;">8.00</span> bar</label>
+              <input type="range" id="slider-limite-alto" min="5" max="10" step="0.1" value="8.0" oninput="atualizarLimitesPressao()">
+            </div>
+          </div>
+
           <div class="linha-botoes-pressao">
             <button id="btn-gravar-pressao" class="btn-menu" style="margin-bottom: 0; background: #10b981; color: white; border-color: #10b981;" onclick="alternarGravacaoPressao()">
               ⏺️ Iniciar Gravação
@@ -908,6 +966,31 @@ let gravandoPressao = false;
 let leituraAtualSessao = [];
 let listaHistoricos = [];
 let registroSelecionadoModal = null;
+
+// VARIÁVEIS DE LIMITE DINÂMICO
+let limiteBaixa = 1.0;
+let limiteAlta = 8.0;
+
+function atualizarLimitesPressao() {
+    limiteBaixa = parseFloat(document.getElementById('slider-limite-baixo').value);
+    limiteAlta = parseFloat(document.getElementById('slider-limite-alto').value);
+
+    document.getElementById('txt-limite-baixo').innerText = limiteBaixa.toFixed(2);
+    document.getElementById('txt-limite-alto').innerText = limiteAlta.toFixed(2);
+
+    if (registroSelecionadoModal) {
+        exibirModalHistorico(registroSelecionadoModal);
+    }
+}
+
+function calcularStatusPressao(valorBar) {
+    if (valorBar > limiteAlta) {
+        return { texto: "ALTA", html: '<span style="color: #ef4444; font-weight: bold;">ALTA</span>' };
+    } else if (valorBar < limiteBaixa) {
+        return { texto: "BAIXA", html: '<span style="color: #f59e0b; font-weight: bold;">BAIXA</span>' };
+    }
+    return { texto: "OK", html: '<span style="color: #10b981; font-weight: bold;">OK</span>' };
+}
 
 function voltarAoHub() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -1389,15 +1472,13 @@ function exibirModalHistorico(registro) {
     registro.dados.forEach((ponto, i) => {
         const tr = document.createElement('tr');
         const vBar = Number(ponto.valor).toFixed(2);
-        let badgeStatus = '<span style="color: #10b981; font-weight: bold;">OK</span>';
-        if (vBar > 8.0) badgeStatus = '<span style="color: #ef4444; font-weight: bold;">ALTA</span>';
-        else if (vBar < 1.0) badgeStatus = '<span style="color: #f59e0b; font-weight: bold;">BAIXA</span>';
+        const statusObj = calcularStatusPressao(Number(ponto.valor));
 
         tr.innerHTML = `
             <td>${i + 1}</td>
             <td>${ponto.hora}</td>
             <td><strong>${vBar}</strong></td>
-            <td>${badgeStatus}</td>
+            <td>${statusObj.html}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -1410,20 +1491,15 @@ function fecharModalHistorico() {
     registroSelecionadoModal = null;
 }
 
-// ============================================================================
-// FUNÇÃO AJUSTADA PARA GERAR O EXCEL/CSV COM AS MESMAS COLUNAS DA TABELA DA IMAGEM
-// ============================================================================
 function baixarHistoricoExcel() {
     if (!registroSelecionadoModal || !registroSelecionadoModal.dados) return;
     
     let csvContent = "\uFEFFItem;Horario;Pressao (bar);Status\n";
     registroSelecionadoModal.dados.forEach((ponto, i) => {
         const vBar = Number(ponto.valor);
-        let statusTexto = "OK";
-        if (vBar > 8.0) statusTexto = "ALTA";
-        else if (vBar < 1.0) statusTexto = "BAIXA";
+        const statusObj = calcularStatusPressao(vBar);
 
-        csvContent += `${i + 1};${ponto.hora};${vBar.toFixed(2).replace('.', ',')};${statusTexto}\n`;
+        csvContent += `${i + 1};${ponto.hora};${vBar.toFixed(2).replace('.', ',')};${statusObj.texto}\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1436,9 +1512,6 @@ function baixarHistoricoExcel() {
     document.body.removeChild(link);
 }
 
-// ============================================================================
-// FUNÇÃO AJUSTADA PARA GERAR O TXT COM AS MESMAS COLUNAS DA TABELA DA IMAGEM
-// ============================================================================
 function baixarHistoricoTXT() {
     if (!registroSelecionadoModal || !registroSelecionadoModal.dados) return;
 
@@ -1452,11 +1525,9 @@ function baixarHistoricoTXT() {
 
     registroSelecionadoModal.dados.forEach((ponto, i) => {
         const vBar = Number(ponto.valor);
-        let statusTexto = "OK";
-        if (vBar > 8.0) statusTexto = "ALTA";
-        else if (vBar < 1.0) statusTexto = "BAIXA";
+        const statusObj = calcularStatusPressao(vBar);
 
-        txtContent += `${i + 1}\t${ponto.hora}\t\t${vBar.toFixed(2)}\t\t${statusTexto}\n`;
+        txtContent += `${i + 1}\t${ponto.hora}\t\t${vBar.toFixed(2)}\t\t${statusObj.texto}\n`;
     });
 
     const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
@@ -1511,6 +1582,13 @@ function registrarLeituraPressao(valorBar) {
     const agora = new Date();
     
     Plotly.extendTraces('plotPressaoRealtime', { x: [[agora]], y: [[valorBar]] }, [0], 60);
+
+    // Atualização da barra visual de altura dinâmica (escala de 0 a 10 bar)
+    const porcentagemBarra = Math.min(Math.max((valorBar / 10.0) * 100, 0), 100);
+    const elBarra = document.getElementById('barra-pressao-nivel');
+    if (elBarra) {
+        elBarra.style.height = porcentagemBarra + "%";
+    }
 
     if (gravandoPressao) {
         leituraAtualSessao.push({
@@ -1786,7 +1864,10 @@ function consultarCLP() {
     });
 }
 setInterval(consultarCLP, 80);
-document.addEventListener('DOMContentLoaded', carregarHistoricosDoServidor);
+document.addEventListener('DOMContentLoaded', () => {
+    carregarHistoricosDoServidor();
+    atualizarLimitesPressao();
+});
 </script>
 </body>
 </html>
