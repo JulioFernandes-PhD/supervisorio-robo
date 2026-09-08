@@ -10,6 +10,8 @@ import time
 import urllib.parse
 import uuid
 import webbrowser
+import math
+import random
 
 # Tenta importar requests para a transmissão externa
 try:
@@ -219,7 +221,15 @@ def worker_leitura_clp():
                     ESTADO_ENTRADAS["X23"] = ESTADO_SAIDAS.get("Y1", False)
                     ESTADO_ENTRADAS["X25"] = ESTADO_SAIDAS.get("Y3", False)
 
-                    VALOR_PRESSAO_BAR = round((segundos % 100) / 10.0, 2)
+                    tempo_fluido = time.time()
+                    # Cria uma onda base oscilando de forma rápida + ruído aleatório
+                    pressao_base = 5.0 + 3.5 * math.sin(tempo_fluido * 1.5) + math.sin(tempo_fluido * 4.0)
+                    ruido_aleatorio = random.uniform(-0.8, 0.8)
+                    val_pressao = pressao_base + ruido_aleatorio
+
+                    # Garante o limite rigoroso de 0.0 a 10.0 bar
+                    VALOR_PRESSAO_BAR = round(max(0.0, min(10.0, val_pressao)), 2)
+                    
                     STATUS_COMUNICACAO = "SIMULADOR_ATIVO_OK"
                 
                 pot_calc, detalhe_calc = calcular_potencia_instantanea()
@@ -622,7 +632,13 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         ESTADO_ENTRADAS["X23"] = ESTADO_SAIDAS.get("Y1", False)
                         ESTADO_ENTRADAS["X25"] = ESTADO_SAIDAS.get("Y3", False)
 
-                        VALOR_PRESSAO_BAR = round((segundos % 100) / 10.0, 2)
+                        tempo_fluido = agora
+                        pressao_base = 5.0 + 3.5 * math.sin(tempo_fluido * 1.5) + math.sin(tempo_fluido * 4.0)
+                        ruido_aleatorio = random.uniform(-0.8, 0.8)
+                        val_pressao = pressao_base + ruido_aleatorio
+
+                        VALOR_PRESSAO_BAR = round(max(0.0, min(10.0, val_pressao)), 2)
+                        
                         status_envio = "SIMULADOR_ATIVO_OK"
                         modo_real_envio = False
                     else:
