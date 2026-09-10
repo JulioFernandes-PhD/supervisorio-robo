@@ -1603,9 +1603,9 @@ const dataGaugePotencia = [
     type: "indicator",
     mode: "gauge+number",
     value: 0.0,
-    number: { suffix: " W", font: { size: 28, family: "Arial", color: "#1e293b" }, valueformat: ".1f" },
+    number: { suffix: " W     ", font: { size: 68, family: "Arial", color: "#1e293b" }, valueformat: ".1f" },
     gauge: {
-      axis: { range: [0, 300], tickwidth: 1, tickcolor: "#475569" },
+      axis: { range: [0, 300], tickwidth: 1, tickcolor: "#475569", tickfont: { size: 16 }},
       bar: { color: "#1e293b", width: 4 },
       bgcolor: "white",
       borderwidth: 2,
@@ -1621,8 +1621,8 @@ const dataGaugePotencia = [
 ];
 
 const layoutGaugePotencia = {
-  title: { text: "Potência Instantânea", font: { size: 18, family: "Arial", weight: "bold" } },
-  margin: { t: 40, r: 35, l: 35, b: 20 }
+  title: { text: "Potência Instantânea [W]", font: { size: 28, family: "Arial", weight: "bold" } },
+  margin: { t: 70, r: 35, l: 25, b: 20 }
 };
 
 Plotly.newPlot('gaugePotencia', dataGaugePotencia, layoutGaugePotencia);
