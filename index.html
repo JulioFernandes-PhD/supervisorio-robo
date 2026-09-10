@@ -16,7 +16,6 @@
 body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #FFFFFF; overflow-x: hidden; }
 .container-principal { display: flex; flex-direction: row; gap: 20px; width: 100%; }
 
-/* Estilização do Cabeçalho com Badge de Status */
 .cabecalho-container {
   display: flex;
   justify-content: space-between;
@@ -77,7 +76,6 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 .tela.ativa { display: block; }
 #container-stl-novo { width: 100%; height: 82vh; min-height: 550px; background-color: #0f172a; border-radius: 8px; border: 1px solid #1e293b; position: relative; overflow: hidden; touch-action: none; }
 
-/* Barra de Ferramentas CAD 3D Flutuante */
 .toolbar-vistas-3d {
   position: absolute;
   top: 15px;
@@ -116,7 +114,18 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 
 .grid-telemetria { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
 .card-grafico { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 5px; overflow: hidden; }
-.wrapper-manometro-real { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
+
+/* ESTILOS DA BARRA VISUAL DE PRESSÃO */
+.container-flex-pressao {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+.wrapper-manometro-real { position: relative; width: 100%; max-width: 340px; margin: 0; min-width: 280px; }
 .imagem-fundo-manometro { width: 100%; height: auto; display: block; }
 .display-digital-sobreposto { 
   position: absolute; 
@@ -135,6 +144,286 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   font-size: 4.6rem; 
   text-shadow: 0 0 5px rgba(255, 30, 30, 0.85); 
 }
+
+.barra-pressao-container {
+  width: 35px;
+  height: 800px;
+  background: #e2e8f0;
+  border: 2px solid #94a3b8;
+  border-radius: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.barra-pressao-nivel {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(0deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+  transition: height 0.15s ease-out;
+}
+
+.painel-controles-limites {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.grupo-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #334155;
+}
+
+.painel-direita-pressao {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.linha-botoes-pressao {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+}
+
+.linha-botoes-pressao .btn-menu {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.container-tabela-historico {
+  width: 100%;
+  margin-top: 15px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+}
+
+.titulo-tabela-historico {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1e293b;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.tabela-historico-leitura {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabela-historico-leitura th {
+  background-color: #1b6389;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border: 1px solid #185272;
+}
+
+.tabela-historico-leitura td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.tabela-historico-leitura tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.btn-acao-open {
+  background: #8bc34a;
+  color: #ffffff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-right: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.btn-acao-open:hover { background: #7cb342; }
+
+.btn-acao-delete {
+  background: #d32f2f;
+  color: #ffffff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.btn-acao-delete:hover { background: #c62828; }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.ativo {
+  display: flex;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  background: #1b6389;
+  color: #ffffff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.btn-fechar-modal {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 5px;
+}
+
+.btn-fechar-modal:hover { color: #fca5a5; }
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.modal-info-bar {
+  display: flex;
+  justify-content: space-between;
+  background: #f8fafc;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.tabela-modal {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabela-modal th {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+}
+
+.tabela-modal td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.tabela-modal tr:nth-child(even) { background: #f8fafc; }
+
+.modal-footer {
+  background: #f8fafc;
+  padding: 12px 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-download-excel {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-download-excel:hover { background: #059669; }
+
+.btn-download-txt {
+  background: #0284c7;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-download-txt:hover { background: #0369a1; }
 
 .container-monitor-entradas, .container-monitor-saidas { max-width: 650px; margin: 15px auto; }
 .grid-leds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 15px 0 25px 0; }
@@ -261,6 +550,8 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   .painel-custo-energia { flex-direction: column; gap: 10px; }
   .toolbar-vistas-3d { top: 10px; right: 10px; padding: 4px; gap: 4px; }
   .btn-vista-cad { padding: 4px 6px; font-size: 0.7rem; }
+  .container-flex-pressao { flex-direction: column; align-items: center; }
+  .linha-botoes-pressao { flex-direction: column; }
 }
 </style>
 </head>
@@ -275,21 +566,18 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     <button class="btn-menu" onclick="mudarTela('telemetria', this)">Telemetria</button>
     <button class="btn-menu" onclick="mudarTela('medidor_potencia', this)">Potência Instantânea</button>
     <button class="btn-menu" onclick="mudarTela('pressao_real', this)">Transdutor de Pressão</button>
-    <!-- <button class="btn-menu" onclick="mudarTela('controle_bt', this)">Controle Bluetooth</button> -->
     <button class="btn-menu" onclick="mudarTela('monitor_entradas', this)">Entradas CLP</button>
     <button class="btn-menu" onclick="mudarTela('monitor_saidas', this)">Saídas CLP</button>
   </div>
 
   <div class="conteudo-principal">
     
-    <!-- Cabeçalho Flexivel com Badge de Operação -->
     <div class="cabecalho-container">
       <div id="cabecalho" class="cabecalho-industrial">DIGITAL TWIN: ROBÔ CARTESIANO</div>
       <div id="badge-modo-operacao" class="badge-status status-online">ON-LINE</div>
     </div>
 
     <div id="tela-base_stl_nova" class="tela ativa" style="position: relative;">
-      <!-- Barra de Controle de Vista CAD Flutuante -->
       <div class="toolbar-vistas-3d">
         <button class="btn-vista-cad" onclick="definirVistaCAD('isometrica')" title="Vista Isométrica">🧊 ISO</button>
         <button class="btn-vista-cad" onclick="definirVistaCAD('frente')" title="Vista Frontal">👁️ FRENTE</button>
@@ -344,9 +632,62 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     </div>
 
     <div id="tela-pressao_real" class="tela">
-      <div class="wrapper-manometro-real">
-        <img class="imagem-fundo-manometro" src="/assets/image_e84f27.jpg" alt="Sensor Parker">
-        <div id="valor-display-real" class="display-digital-sobreposto">0.00</div>
+      <div class="container-flex-pressao">
+        
+        <div class="wrapper-manometro-real">
+          <img class="imagem-fundo-manometro" src="/assets/image_e84f27.jpg" alt="Sensor Parker">
+          <div id="valor-display-real" class="display-digital-sobreposto">0.00</div>
+        </div>
+
+        <!-- ELEMENTO VISUAL DA BARRA DE NÍVEL DE PRESSÃO -->
+        <div class="barra-pressao-container" title="Nível de Pressão">
+          <div id="barra-pressao-nivel" class="barra-pressao-nivel"></div>
+        </div>
+
+        <div class="painel-direita-pressao">
+          <!-- PAINEL DE AJUSTE DINÂMICO DE LIMITES (SLIDERS) -->
+          <div class="painel-controles-limites">
+            <div class="grupo-slider">
+              <label for="slider-limite-baixo">Limite Inferior (BAIXA): <span id="txt-limite-baixo" style="color: #f59e0b;">1.00</span> bar</label>
+              <input type="range" id="slider-limite-baixo" min="0" max="5" step="0.1" value="1.0" oninput="atualizarLimitesPressao()">
+            </div>
+            <div class="grupo-slider">
+              <label for="slider-limite-alto">Limite Superior (ALTA): <span id="txt-limite-alto" style="color: #ef4444;">8.00</span> bar</label>
+              <input type="range" id="slider-limite-alto" min="5" max="10" step="0.1" value="8.0" oninput="atualizarLimitesPressao()">
+            </div>
+          </div>
+
+          <div class="linha-botoes-pressao">
+            <button id="btn-gravar-pressao" class="btn-menu" style="margin-bottom: 0; background: #10b981; color: white; border-color: #10b981;" onclick="alternarGravacaoPressao()">
+              ⏺️ Iniciar Gravação
+            </button>
+            <button class="btn-menu" style="margin-bottom: 0; background: #0284c7; color: white; border-color: #0284c7;" onclick="toggleGraficoPressao()">
+              📊 Ver Plot Tempo Real
+            </button>
+          </div>
+
+          <div id="container-plot-pressao" class="card-grafico" style="display: none; width: 100%;">
+            <div id="plotPressaoRealtime" style="width: 100%; height: 280px;"></div>
+          </div>
+
+          <div class="container-tabela-historico">
+            <div class="titulo-tabela-historico">Histórico de leituras</div>
+            <table class="tabela-historico-leitura">
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Item</th>
+                  <th style="width: 30%;">Data</th>
+                  <th style="width: 35%;">Nome</th>
+                  <th style="width: 20%;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="corpoTabelaHistorico">
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
       </div>
     </div>
 
@@ -581,9 +922,75 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   </div>
 </div>
 
+<div id="modalDetalhesHistorico" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitulo">Leitura de Pressão</h3>
+      <button class="btn-fechar-modal" onclick="fecharModalHistorico()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info-bar">
+        <span><strong>Data:</strong> <span id="modalData">-</span></span>
+        <span><strong>Registros Capturados:</strong> <span id="modalTotalPontos">0</span></span>
+      </div>
+      <table class="tabela-modal">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Horário</th>
+            <th>Pressão (bar)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabelaModal">
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-download-txt" onclick="baixarHistoricoTXT()">📄 Baixar TXT</button>
+      <button class="btn-download-excel" onclick="baixarHistoricoExcel()">📊 Baixar Excel (CSV)</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let y2Ligado = false;
 let telaAtual = 'base_stl_nova';
+
+const usuarioLogado = {
+    nome: localStorage.getItem('user_nome') || "Admin",
+    role: localStorage.getItem('user_role') || "admin"
+};
+
+let gravandoPressao = false;
+let leituraAtualSessao = [];
+let listaHistoricos = [];
+let registroSelecionadoModal = null;
+
+// VARIÁVEIS DE LIMITE DINÂMICO
+let limiteBaixa = 1.0;
+let limiteAlta = 8.0;
+
+function atualizarLimitesPressao() {
+    limiteBaixa = parseFloat(document.getElementById('slider-limite-baixo').value);
+    limiteAlta = parseFloat(document.getElementById('slider-limite-alto').value);
+
+    document.getElementById('txt-limite-baixo').innerText = limiteBaixa.toFixed(2);
+    document.getElementById('txt-limite-alto').innerText = limiteAlta.toFixed(2);
+
+    if (registroSelecionadoModal) {
+        exibirModalHistorico(registroSelecionadoModal);
+    }
+}
+
+function calcularStatusPressao(valorBar) {
+    if (valorBar > limiteAlta) {
+        return { texto: "ALTA", html: '<span style="color: #ef4444; font-weight: bold;">ALTA</span>' };
+    } else if (valorBar < limiteBaixa) {
+        return { texto: "BAIXA", html: '<span style="color: #f59e0b; font-weight: bold;">BAIXA</span>' };
+    }
+    return { texto: "OK", html: '<span style="color: #10b981; font-weight: bold;">OK</span>' };
+}
 
 function voltarAoHub() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -604,14 +1011,16 @@ function mudarTela(tela, botao) {
     } else if(tela === 'telemetria') {
         document.getElementById('tela-telemetria').classList.add('ativa');
         document.getElementById('cabecalho').innerText = "MONITORAMENTO: POSIÇÃO DOS EIXOS";
-        setTimeout(() => { Plotly.Plots.resize('plotX'); Plotly.Plots.resize('plotY'); Plotly.Plots.resize('plotZ'); }, 10);
+        requestAnimationFrame(() => { Plotly.Plots.resize('plotX'); Plotly.Plots.resize('plotY'); Plotly.Plots.resize('plotZ'); });
     } else if(tela === 'medidor_potencia') {
         document.getElementById('tela-medidor_potencia').classList.add('ativa');
         document.getElementById('cabecalho').innerText = "MONITOR DE POTÊNCIA INSTANTÂNEA";
-        setTimeout(() => { Plotly.Plots.resize('gaugePotencia'); }, 10);
+        requestAnimationFrame(() => { Plotly.Plots.resize('gaugePotencia'); });
     } else if(tela === 'pressao_real') {
         document.getElementById('tela-pressao_real').classList.add('ativa');
         document.getElementById('cabecalho').innerText = "LEITURA TRANSDUTOR DE PRESSÃO";
+        carregarHistoricosDoServidor();
+        requestAnimationFrame(() => { Plotly.Plots.resize('plotPressaoRealtime'); });
     } else if(tela === 'controle_bt') {
         document.getElementById('tela-controle_bt').classList.add('ativa');
         document.getElementById('cabecalho').innerText = "PAINEL INTERATIVO: CONTROLE BLUETOOTH";
@@ -624,7 +1033,7 @@ function mudarTela(tela, botao) {
     }
 }
 
-// THREE.JS SCENE SETUP
+// THREE.JS SETUP
 const containerNovo = document.getElementById('container-stl-novo');
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0f172a);
@@ -684,7 +1093,6 @@ const labelX = criarRotuloTexto('X', '#4488FF');
 labelX.position.set(posX, posY, posZ + tamanhoEixo + 30);
 scene.add(labelX);
 
-// FUNÇÃO AUXILIAR PARA ADICIONAR BORDAS ESTILO CAD (SHADED WITH EDGES)
 function adicionarBordasAoModelo(mesh, corBorda = 0x1e293b, anguloDegrau = 30) {
     const edgesGeometry = new THREE.EdgesGeometry(mesh.geometry, anguloDegrau);
     const lineMaterial = new THREE.LineBasicMaterial({ color: corBorda, linewidth: 1 });
@@ -704,7 +1112,6 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
     
-    // Bordas para a Base (Tom cinza escuro)
     adicionarBordasAoModelo(meshBase, 0x334155, 30);
     gantryGroup.add(meshBase);
 
@@ -714,7 +1121,6 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
         geometryCarroX.computeVertexNormals();
         meshCarrox = new THREE.Mesh(geometryCarroX, materialCarroX);
         
-        // Bordas para o Carro X (Tom azul escuro)
         adicionarBordasAoModelo(meshCarrox, 0x0284c7, 30);
 
         meshCarrox.position.x += -12;
@@ -728,7 +1134,6 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
             geometryCarroY.computeVertexNormals();
             meshCarroY = new THREE.Mesh(geometryCarroY, materialCarroY);
             
-            // Bordas para o Carro Y (Tom verde escuro)
             adicionarBordasAoModelo(meshCarroY, 0x047857, 30);
 
             meshCarroY.position.x += 100;
@@ -745,7 +1150,6 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
                 geometryCarroz.computeVertexNormals();
                 meshCarroz = new THREE.Mesh(geometryCarroz, materialCarroz);
                 
-                // Bordas para o Carro Z (Tom âmbar/laranja escuro)
                 adicionarBordasAoModelo(meshCarroz, 0xb45309, 30);
 
                 meshCarroz.position.x += 180;
@@ -771,7 +1175,6 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     });
 });
 
-// FUNÇÃO DE AUTO AJUSTE DE VISTAS CAD
 function definirVistaCAD(tipoVista) {
     const dist = 2200; 
     const alvo = centroModelo; 
@@ -900,11 +1303,11 @@ animateThreeJS();
 
 function redimensionarThreeJS() {
     if(!containerNovo) return;
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         camera.aspect = containerNovo.clientWidth / containerNovo.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(containerNovo.clientWidth, containerNovo.clientHeight);
-    }, 100);
+    });
 }
 window.addEventListener('resize', redimensionarThreeJS);
 
@@ -920,7 +1323,7 @@ const layoutPadrao = {
     yaxis: { title: { text: 'mm' } },
     xaxis: {
         type: 'date',
-        tickformat: '%S s',
+        tickformat: '%H:%M:%S',
         nticks: 6,
         title: {
             text: 'Horário (--:--h)',
@@ -934,14 +1337,275 @@ Plotly.newPlot('plotX', [{x: [], y: [], mode: 'lines', line: {color: '#38bdf8', 
 Plotly.newPlot('plotY', [{x: [], y: [], mode: 'lines', line: {color: '#10b981', width: 2.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Y (mm)' }, yaxis: { range: [-10, 500], title: { text: 'mm' } } });
 Plotly.newPlot('plotZ', [{x: [], y: [], mode: 'lines', line: {color: '#f59e0b', width: 2.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Z (mm)' }, yaxis: { range: [-10, 200], title: { text: 'mm' } } });
 
+Plotly.newPlot('plotPressaoRealtime', [{
+    x: [],
+    y: [],
+    mode: 'lines',
+    line: { color: '#ef4444', width: 2.5 }
+}], {
+    title: { text: 'Pressão Hidráulica / Pneumática (bar)', font: { size: 14 } },
+    yaxis: { range: [0, 10], title: { text: 'bar' } },
+    xaxis: { type: 'date', tickformat: '%H:%M:%S', title: { text: 'Horário' } },
+    margin: { t: 35, b: 40, l: 40, r: 20 }
+});
+
+function salvarLeituraNoServidor(dadosCapturados) {
+    const novoRegistro = {
+        id: "rec_" + Date.now(),
+        nome: `transdutor_leitura_${Date.now()}`,
+        data: new Date().toISOString(),
+        dados: dadosCapturados
+    };
+
+    fetch('/api/pressao/historico', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novoRegistro)
+    })
+    .then(res => res.json())
+    .then(resposta => {
+        if (resposta && resposta.id) {
+            listaHistoricos.unshift(resposta);
+        } else {
+            listaHistoricos.unshift(novoRegistro);
+        }
+        atualizarTabelaHistoricoHTML();
+    })
+    .catch(err => {
+        console.warn("Servidor offline ou erro no banco. Exibindo localmente:", err);
+        listaHistoricos.unshift(novoRegistro);
+        atualizarTabelaHistoricoHTML();
+    });
+}
+
+function carregarHistoricosDoServidor() {
+    fetch('/api/pressao/historico')
+        .then(res => res.json())
+        .then(dados => {
+            if (Array.isArray(dados)) {
+                listaHistoricos = dados;
+                atualizarTabelaHistoricoHTML();
+            }
+        })
+        .catch(err => {
+            console.log("Banco indisponível. Mantendo registros locais acumulados.");
+            atualizarTabelaHistoricoHTML();
+        });
+}
+
+function alternarGravacaoPressao() {
+    gravandoPressao = !gravandoPressao;
+    const btn = document.getElementById('btn-gravar-pressao');
+    
+    if (gravandoPressao) {
+        leituraAtualSessao = [];
+        btn.innerHTML = "⏹️ Parar e Salvar";
+        btn.style.background = "#ef4444";
+        btn.style.borderColor = "#ef4444";
+    } else {
+        btn.innerHTML = "⏺️ Iniciar Gravação";
+        btn.style.background = "#10b981";
+        btn.style.borderColor = "#10b981";
+        
+        if (leituraAtualSessao.length > 0) {
+            salvarLeituraNoServidor(leituraAtualSessao);
+        } else {
+            alert("Nenhum registro foi capturado durante este período de gravação.");
+        }
+    }
+}
+
+function atualizarTabelaHistoricoHTML() {
+    const tbody = document.getElementById('corpoTabelaHistorico');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    listaHistoricos.forEach((registro, index) => {
+        const tr = document.createElement('tr');
+        const botaoDeleteHTML = (usuarioLogado.role === 'admin') 
+            ? `<button class="btn-acao-delete" onclick="deletarHistorico('${registro.id}', ${index})">❌ DELETE</button>` 
+            : '';
+
+        const dataFormatada = registro.data ? new Date(registro.data).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR');
+
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${dataFormatada}</td>
+            <td>${registro.nome}</td>
+            <td>
+                <button class="btn-acao-open" onclick="abrirDetalhesHistorico('${registro.id}')">OPEN</button>
+                ${botaoDeleteHTML}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function abrirDetalhesHistorico(id) {
+    let registro = listaHistoricos.find(item => item.id === id);
+    if (registro && registro.dados) {
+        exibirModalHistorico(registro);
+        return;
+    }
+
+    fetch(`/api/pressao/historico/${id}`)
+        .then(res => res.json())
+        .then(registroServidor => {
+            if (!registroServidor || !registroServidor.dados) return;
+            exibirModalHistorico(registroServidor);
+        })
+        .catch(err => console.error("Erro ao carregar detalhes:", err));
+}
+
+function exibirModalHistorico(registro) {
+    registroSelecionadoModal = registro;
+    
+    document.getElementById('modalTitulo').innerText = registro.nome || "Historico de Leitura";
+    const dataFormatada = registro.data ? new Date(registro.data).toLocaleString('pt-BR') : new Date().toLocaleString('pt-BR');
+    document.getElementById('modalData').innerText = dataFormatada;
+    document.getElementById('modalTotalPontos').innerText = registro.dados.length;
+
+    const tbody = document.getElementById('corpoTabelaModal');
+    tbody.innerHTML = '';
+
+    registro.dados.forEach((ponto, i) => {
+        const tr = document.createElement('tr');
+        const vBar = Number(ponto.valor).toFixed(2);
+        const statusObj = calcularStatusPressao(Number(ponto.valor));
+
+        tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${ponto.hora}</td>
+            <td><strong>${vBar}</strong></td>
+            <td>${statusObj.html}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById('modalDetalhesHistorico').classList.add('ativo');
+}
+
+function fecharModalHistorico() {
+    document.getElementById('modalDetalhesHistorico').classList.remove('ativo');
+    registroSelecionadoModal = null;
+}
+
+function baixarHistoricoExcel() {
+    if (!registroSelecionadoModal || !registroSelecionadoModal.dados) return;
+    
+    let csvContent = "\uFEFFItem;Horario;Pressao (bar);Status\n";
+    registroSelecionadoModal.dados.forEach((ponto, i) => {
+        const vBar = Number(ponto.valor);
+        const statusObj = calcularStatusPressao(vBar);
+
+        csvContent += `${i + 1};${ponto.hora};${vBar.toFixed(2).replace('.', ',')};${statusObj.texto}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${registroSelecionadoModal.nome || 'historico_pressao'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function baixarHistoricoTXT() {
+    if (!registroSelecionadoModal || !registroSelecionadoModal.dados) return;
+
+    let txtContent = `====================================================================\n`;
+    txtContent += `RELATORIO DE PRESSAO - DIGITAL TWIN GANTRY\n`;
+    txtContent += `Nome: ${registroSelecionadoModal.nome}\n`;
+    txtContent += `Data: ${registroSelecionadoModal.data ? new Date(registroSelecionadoModal.data).toLocaleString('pt-BR') : new Date().toLocaleString('pt-BR')}\n`;
+    txtContent += `====================================================================\n\n`;
+    txtContent += `ITEM\tHORARIO\t\tPRESSAO (bar)\tSTATUS\n`;
+    txtContent += `--------------------------------------------------------------------\n`;
+
+    registroSelecionadoModal.dados.forEach((ponto, i) => {
+        const vBar = Number(ponto.valor);
+        const statusObj = calcularStatusPressao(vBar);
+
+        txtContent += `${i + 1}\t${ponto.hora}\t\t${vBar.toFixed(2)}\t\t${statusObj.texto}\n`;
+    });
+
+    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${registroSelecionadoModal.nome || 'historico_pressao'}.txt`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function deletarHistorico(id, index) {
+    if (usuarioLogado.role !== 'admin') {
+        alert("Acesso Negado: Apenas administradores podem excluir registros de leitura.");
+        return;
+    }
+
+    if (confirm("Deseja realmente excluir este histórico de leitura do banco de dados?")) {
+        fetch(`/api/pressao/historico/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-User-Role': usuarioLogado.role }
+        })
+        .then(res => res.json())
+        .then(resposta => {
+            if (resposta.sucesso) {
+                listaHistoricos.splice(index, 1);
+                atualizarTabelaHistoricoHTML();
+            } else {
+                alert("Erro ao excluir do servidor: " + resposta.mensagem);
+            }
+        })
+        .catch(err => {
+            console.error("Erro ao excluir histórico do servidor. Removendo localmente:", err);
+            listaHistoricos.splice(index, 1);
+            atualizarTabelaHistoricoHTML();
+        });
+    }
+}
+
+function toggleGraficoPressao() {
+    const containerPlot = document.getElementById('container-plot-pressao');
+    if (containerPlot.style.display === 'none') {
+        containerPlot.style.display = 'block';
+        requestAnimationFrame(() => Plotly.Plots.resize('plotPressaoRealtime'));
+    } else {
+        containerPlot.style.display = 'none';
+    }
+}
+
+function registrarLeituraPressao(valorBar) {
+    const agora = new Date();
+    
+    Plotly.extendTraces('plotPressaoRealtime', { x: [[agora]], y: [[valorBar]] }, [0], 60);
+
+    // Atualização da barra visual de altura dinâmica (escala de 0 a 10 bar)
+    const porcentagemBarra = Math.min(Math.max((valorBar / 10.0) * 100, 0), 100);
+    const elBarra = document.getElementById('barra-pressao-nivel');
+    if (elBarra) {
+        elBarra.style.height = porcentagemBarra + "%";
+    }
+
+    if (gravandoPressao) {
+        leituraAtualSessao.push({
+            hora: agora.toLocaleTimeString(),
+            valor: valorBar
+        });
+    }
+}
+
 const dataGaugePotencia = [
   {
     type: "indicator",
     mode: "gauge+number",
     value: 0.0,
-    number: { suffix: " W", font: { size: 28, family: "Arial", color: "#1e293b" }, valueformat: ".1f" },
+    number: { suffix: " W     ", font: { size: 68, family: "Arial", color: "#1e293b" }, valueformat: ".1f" },
     gauge: {
-      axis: { range: [0, 300], tickwidth: 1, tickcolor: "#475569" },
+      axis: { range: [0, 300], tickwidth: 1, tickcolor: "#475569", tickfont: { size: 16 }},
       bar: { color: "#1e293b", width: 4 },
       bgcolor: "white",
       borderwidth: 2,
@@ -957,8 +1621,8 @@ const dataGaugePotencia = [
 ];
 
 const layoutGaugePotencia = {
-  title: { text: "Potência Instantânea", font: { size: 18, family: "Arial", weight: "bold" } },
-  margin: { t: 40, r: 35, l: 35, b: 20 }
+  title: { text: "Potência Instantânea [W]", font: { size: 28, family: "Arial", weight: "bold" } },
+  margin: { t: 70, r: 35, l: 25, b: 20 }
 };
 
 Plotly.newPlot('gaugePotencia', dataGaugePotencia, layoutGaugePotencia);
@@ -1018,7 +1682,6 @@ function consultarCLP() {
     .then(dados => {
         buscandoDados = false;
 
-        // Atualização Dinâmica do Modo de Operação no Cabeçalho
         const badgeModo = document.getElementById('badge-modo-operacao');
         const erroConexao = (dados.status_comunicacao === "ERRO_PORTA" || dados.status_comunicacao === "SEM_RESPOSTA_CLP");
 
@@ -1043,6 +1706,8 @@ function consultarCLP() {
 
         const vPressao = (dados.pressao_bar !== undefined) ? dados.pressao_bar : 0.0;
         const vPotencia = (dados.potencia_w !== undefined) ? dados.potencia_w : 0.0;
+
+        registrarLeituraPressao(vPressao);
 
         Plotly.restyle('gaugePotencia', 'value', [vPotencia]);
 
@@ -1199,6 +1864,10 @@ function consultarCLP() {
     });
 }
 setInterval(consultarCLP, 80);
+document.addEventListener('DOMContentLoaded', () => {
+    carregarHistoricosDoServidor();
+    atualizarLimitesPressao();
+});
 </script>
 </body>
 </html>
