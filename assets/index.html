@@ -1112,6 +1112,8 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
     
+    meshBase.position.z += -150; // Altere o valor (ex: +100 ou -100) para mover para trás/frente
+    
     adicionarBordasAoModelo(meshBase, 0x334155, 30);
     gantryGroup.add(meshBase);
 
