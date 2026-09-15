@@ -1114,7 +1114,7 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     
     meshBase.position.z += -150; // Altere o valor (ex: +100 ou -100) para mover para trás/frente
     
-    adicionarBordasAoModelo(meshBase, 0x334155, 30);
+    adicionarBordasAoModelo(meshBase, 0x000000, 15);
     gantryGroup.add(meshBase);
 
     const loaderCarroX = new THREE.STLLoader();
@@ -1123,7 +1123,7 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
         geometryCarroX.computeVertexNormals();
         meshCarrox = new THREE.Mesh(geometryCarroX, materialCarroX);
         
-        adicionarBordasAoModelo(meshCarrox, 0x0284c7, 30);
+        adicionarBordasAoModelo(meshCarrox, 0x000000, 30);
 
         meshCarrox.position.x += -12;
         meshCarrox.position.y += 203;
@@ -1136,7 +1136,7 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
             geometryCarroY.computeVertexNormals();
             meshCarroY = new THREE.Mesh(geometryCarroY, materialCarroY);
             
-            adicionarBordasAoModelo(meshCarroY, 0x047857, 30);
+            adicionarBordasAoModelo(meshCarroY, 0x000000, 30);
 
             meshCarroY.position.x += 100;
             meshCarroY.position.y += 472;
@@ -1152,7 +1152,7 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
                 geometryCarroz.computeVertexNormals();
                 meshCarroz = new THREE.Mesh(geometryCarroz, materialCarroz);
                 
-                adicionarBordasAoModelo(meshCarroz, 0xb45309, 30);
+                adicionarBordasAoModelo(meshCarroz, 0x000000, 30);
 
                 meshCarroz.position.x += 180;
                 meshCarroz.position.y += 440;
