@@ -1046,12 +1046,12 @@ containerNovo.appendChild(renderer.domElement);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0);
 scene.add(ambientLight);
-const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+const dirLight1 = new THREE.DirectionalLight(0xffffff, 3.5);
 dirLight1.position.set(300, 500, 400);
 scene.add(dirLight1);
-const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.4);
+const dirLight2 = new THREE.DirectionalLight(0xffffff, 3.5);
 dirLight2.position.set(-300, 200, -400);
 scene.add(dirLight2);
 
