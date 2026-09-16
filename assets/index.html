@@ -580,11 +580,11 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     <div id="tela-base_stl_nova" class="tela ativa" style="position: relative;">
       <div class="toolbar-vistas-3d">
         <button class="btn-vista-cad" onclick="definirVistaCAD('isometrica')" title="Vista Isométrica">🧊 ISO</button>
-        <button class="btn-vista-cad" onclick="definirVistaCAD('frente')" title="Vista Frontal">👁️ FRENTE</button>
-        <button class="btn-vista-cad" onclick="definirVistaCAD('traseira')" title="Vista Traseira">🔙 TRASEIRA</button>
-        <button class="btn-vista-cad" onclick="definirVistaCAD('topo')" title="Vista Superior">🔝 TOPO</button>
-        <button class="btn-vista-cad" onclick="definirVistaCAD('lado')" title="Vista Lateral Direita">🔲 LADO 1</button>
-        <button class="btn-vista-cad" onclick="definirVistaCAD('lado2')" title="Vista Lateral Esquerda">🔲 LADO 2</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('frente')" title="Vista Frontal">👁️ FRONT</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('traseira')" title="Vista Traseira">🔙 BACK</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('topo')" title="Vista Superior">🔝 TOP</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('lado')" title="Vista Lateral Direita">🔲 RIGHT</button>
+        <button class="btn-vista-cad" onclick="definirVistaCAD('lado2')" title="Vista Lateral Esquerda">🔲 LEFT</button>
       </div>
       <div id="container-stl-novo"></div>
     </div>
@@ -1014,11 +1014,11 @@ function mudarTela(tela, botao) {
         requestAnimationFrame(() => { Plotly.Plots.resize('plotX'); Plotly.Plots.resize('plotY'); Plotly.Plots.resize('plotZ'); });
     } else if(tela === 'medidor_potencia') {
         document.getElementById('tela-medidor_potencia').classList.add('ativa');
-        document.getElementById('cabecalho').innerText = "MONITOR DE POTÊNCIA INSTANTÂNEA";
+        document.getElementById('cabecalho').innerText = "MONITORAMENTO: POTÊNCIA INSTANTÂNEA";
         requestAnimationFrame(() => { Plotly.Plots.resize('gaugePotencia'); });
     } else if(tela === 'pressao_real') {
         document.getElementById('tela-pressao_real').classList.add('ativa');
-        document.getElementById('cabecalho').innerText = "LEITURA TRANSDUTOR DE PRESSÃO";
+        document.getElementById('cabecalho').innerText = "MONITORAMENTO: TRANSDUTOR DE PRESSÃO";
         carregarHistoricosDoServidor();
         requestAnimationFrame(() => { Plotly.Plots.resize('plotPressaoRealtime'); });
     } else if(tela === 'controle_bt') {
@@ -1026,10 +1026,10 @@ function mudarTela(tela, botao) {
         document.getElementById('cabecalho').innerText = "PAINEL INTERATIVO: CONTROLE BLUETOOTH";
     } else if(tela === 'monitor_entradas') {
         document.getElementById('tela-monitor_entradas').classList.add('ativa');
-        document.getElementById('cabecalho').innerText = "DIAGNÓSTICO DIGITAL: ENTRADAS X0-X7 E X20-X27";
+        document.getElementById('cabecalho').innerText = "DIAGNÓSTICO DIGITAL: ENTRADAS CLP";
     } else if(tela === 'monitor_saidas') {
         document.getElementById('tela-monitor_saidas').classList.add('ativa');
-        document.getElementById('cabecalho').innerText = "DIAGNÓSTICO DIGITAL: SAÍDAS Y0 - Y7";
+        document.getElementById('cabecalho').innerText = "DIAGNÓSTICO DIGITAL: SAÍDAS CLP";
     }
 }
 
@@ -1108,7 +1108,7 @@ let centroModelo = new THREE.Vector3(0, 250, 0);
 
 const loaderBase = new THREE.STLLoader();
 loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
-    const materialBase = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.7 });
+    const materialBase = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.7 });
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
     
