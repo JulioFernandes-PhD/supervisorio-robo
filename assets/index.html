@@ -1212,6 +1212,7 @@ const velocidadeZ = 1.6;
 
 let y0Ligado = false;
 let y4Ligado = false;
+let x0Ligado = false; // Variável global para o sensor de recuo
 let deslocamentoAtualX = 0;
 let alvoX = 0;
 const cursoMaximoX = 430; 
@@ -1252,10 +1253,16 @@ function animateThreeJS() {
         deslocamentoAtualZ = alvoZ;
     }
 
-    if (y0Ligado && y4Ligado) {
-        alvoX = cursoMaximoX; 
+    if (x0Ligado) {
+        alvoX = 0; // Sensor de recuo físico acionado, força o Digital Twin na origem
+    } else if (y0Ligado && y4Ligado) {
+        alvoX = cursoMaximoX; // Movendo para frente
     } else if (y0Ligado && !y4Ligado) {
-        alvoX = 0;            
+        alvoX = 0; // Movendo para trás
+    } else {
+        // Motor parado (!y0Ligado) E NÃO está no recuo (!x0Ligado)
+        // Significa que o eixo já está lá na frente parado!
+        alvoX = cursoMaximoX;
     }
 
     if (Math.abs(alvoX - deslocamentoAtualX) > velocidadeX) {
@@ -1736,6 +1743,8 @@ function consultarCLP() {
             const driverDesabilitado = dados.saidas.Y5 || false;
             const emMovimento = dados.saidas.Y0 || false;
             const emEmergencia = dados.entradas ? !dados.entradas.X2 : false;
+            
+            x0Ligado = dados.entradas && (dados.entradas.X0 === true || dados.entradas.X0 === 1);
 
             if (!driverDesabilitado && !emEmergencia) {
                 pMotorX = emMovimento ? 35.0 : 15.0;
