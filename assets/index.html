@@ -591,9 +591,9 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
 
     <div id="tela-telemetria" class="tela">
       <div class="grid-telemetria">
-        <div class="card-grafico"><div id="plotX" style="width: 100%; height: 250px;"></div></div>
-        <div class="card-grafico"><div id="plotY" style="width: 100%; height: 250px;"></div></div>
-        <div class="card-grafico"><div id="plotZ" style="width: 100%; height: 250px;"></div></div>
+        <div class="card-grafico"><div id="plotX" style="width: 100%; height: 550px;"></div></div>
+        <div class="card-grafico"><div id="plotY" style="width: 100%; height: 550px;"></div></div>
+        <div class="card-grafico"><div id="plotZ" style="width: 100%; height: 550px;"></div></div>
       </div>
 
       <div style="margin: 30px auto 0 auto; display: flex; align-items: center; justify-content: center; gap: 20px; background: #F8FAFC; padding: 22px 35px; border-radius: 12px; border: 2px solid #E2E8F0; width: fit-content; min-width: 360px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
@@ -1342,9 +1342,9 @@ const layoutPadrao = {
     margin: { t: 40, b: 60, l: 50, r: 20 }
 };
 
-Plotly.newPlot('plotX', [{x: [], y: [], mode: 'lines', line: {color: '#38bdf8', width: 2.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo X (mm)' }, yaxis: { range: [-10, 500], title: { text: 'mm' } } });
-Plotly.newPlot('plotY', [{x: [], y: [], mode: 'lines', line: {color: '#10b981', width: 2.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Y (mm)' }, yaxis: { range: [-10, 500], title: { text: 'mm' } } });
-Plotly.newPlot('plotZ', [{x: [], y: [], mode: 'lines', line: {color: '#f59e0b', width: 2.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Z (mm)' }, yaxis: { range: [-10, 200], title: { text: 'mm' } } });
+Plotly.newPlot('plotX', [{x: [], y: [], mode: 'lines', line: {color: '#38bdf8', width: 3.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo X' }, yaxis: { range: [-10, 500], title: { text: 'Deslocamento [mm]' } } });
+Plotly.newPlot('plotY', [{x: [], y: [], mode: 'lines', line: {color: '#10b981', width: 3.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Y' }, yaxis: { range: [-10, 500], title: { text: 'Deslocamento [mm]' } } });
+Plotly.newPlot('plotZ', [{x: [], y: [], mode: 'lines', line: {color: '#f59e0b', width: 3.5}}], { ...layoutPadrao, title: { text: 'Posição Eixo Z' }, yaxis: { range: [-10, 200], title: { text: 'Deslocamento [mm]' } } });
 
 Plotly.newPlot('plotPressaoRealtime', [{
     x: [],
@@ -1352,8 +1352,8 @@ Plotly.newPlot('plotPressaoRealtime', [{
     mode: 'lines',
     line: { color: '#ef4444', width: 2.5 }
 }], {
-    title: { text: 'Pressão Hidráulica / Pneumática (bar)', font: { size: 14 } },
-    yaxis: { range: [0, 10], title: { text: 'bar' } },
+    title: { text: 'Pressão instantânea', font: { size: 14 } },
+    yaxis: { range: [0, 10], title: { text: 'Pressão (bar)' } },
     xaxis: { type: 'date', tickformat: '%H:%M:%S', title: { text: 'Horário' } },
     margin: { t: 35, b: 40, l: 40, r: 20 }
 });
@@ -1641,7 +1641,7 @@ const ctxBarras = document.getElementById('chartBarrasPotencia').getContext('2d'
 const chartBarrasPotencia = new Chart(ctxBarras, {
     type: 'bar',
     data: {
-        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo', 'Val. Pressão'], // Adicionado Y6
+        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo', 'Valv. Pressão'], // Adicionado Y6
         datasets: [{
             label: 'Potência Instantânea (W)',
             data: [18.0, 0.0, 0.0, 0.0, 0.0, 0.0], // Adicionado valor inicial 0.0 para Y6
@@ -1675,7 +1675,7 @@ const chartBarrasPotencia = new Chart(ctxBarras, {
                 beginAtZero: true,
                 max: 70, // Aumentado de 60 para 70 para comportar a nova carga
                 ticks: { stepSize: 10 },
-                title: { display: true, text: 'Watts (W)' }
+                title: { display: true, text: 'Potência (W)' }
             }
         },
         plugins: { legend: { display: false } }
