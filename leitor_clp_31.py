@@ -47,7 +47,7 @@ BAUDRATE = 38400
 DATA_BITS = 7
 PARIDADE = "E"
 STOP_BITS = 1
-USAR_CLP_REAL = False
+USAR_CLP_REAL = True
 
 # URL do seu serviço hospedado no Render
 URL_RENDER = "https://supervisorio-robo.onrender.com/api/atualizar"
@@ -129,6 +129,7 @@ def calcular_potencia_instantanea():
         "solenoide_y": 0.0,
         "solenoide_z": 0.0,
         "vacuo": 0.0,
+        "valvula_y6": 0.0, # <--- 1. Adicionado campo para Y6
         "reles": 0.0
     }
 
@@ -137,8 +138,9 @@ def calcular_potencia_instantanea():
         if ESTADO_SAIDAS.get("Y1", False): detalhe["solenoide_y"] = 4.8
         if ESTADO_SAIDAS.get("Y2", False): detalhe["solenoide_z"] = 4.8
         if ESTADO_SAIDAS.get("Y3", False): detalhe["vacuo"] = 4.8
+        if ESTADO_SAIDAS.get("Y6", False): detalhe["valvula_y6"] = 4.8  # <--- 2. Atribui potência se Y6 estiver ligada
 
-        reles_ativos = sum(1 for y in ["Y0", "Y1", "Y2", "Y3", "Y4", "Y5"] if ESTADO_SAIDAS.get(y, False))
+        reles_ativos = sum(1 for y in ["Y0", "Y1", "Y2", "Y3", "Y4", "Y5", "Y6"] if ESTADO_SAIDAS.get(y, False))
         detalhe["reles"] = round(reles_ativos * 0.5, 1)
 
     total_watts = sum(detalhe.values())
