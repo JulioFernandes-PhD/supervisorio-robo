@@ -889,7 +889,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
               </tr>
               <tr style="border-bottom: 1px solid #E2E8F0;">
                 <td style="padding: 6px 8px; font-weight: bold; font-family: monospace;">Y3</td>
-                <td style="padding: 6px 8px;"><span style="background: #DCFCE7; color: #15803D; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;">Vácuo</span></td>
+                <td style="padding: 6px 8px;"><span style="background: #DCFCE7; color: #15803D; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;">Sol. Vácuo</span></td>
                 <td style="padding: 6px 8px;">Acionamento de liga/desliga vácuo</td>
               </tr>
               <tr style="border-bottom: 1px solid #E2E8F0;">
@@ -904,8 +904,8 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
               </tr>
               <tr style="border-bottom: 1px solid #E2E8F0;">
                 <td style="padding: 6px 8px; font-weight: bold; font-family: monospace;">Y6</td>
-                <td style="padding: 6px 8px;"><span style="background: #F1F5F9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;">Reserva</span></td>
-                <td style="padding: 6px 8px;">Reservado</td>
+                <td style="padding: 6px 8px;"><span style="background: #E0F2FE; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem;">Valv. Solenoide</span></td>
+                <td style="padding: 6px 8px;">Libera/interrompe ar comprimido do sistema</td>
               </tr>
               <tr>
                 <td style="padding: 6px 8px; font-weight: bold; font-family: monospace;">Y7</td>
@@ -1208,20 +1208,20 @@ function definirVistaCAD(tipoVista) {
 
 let deslocamentoAtualZ = 0; 
 const cursoMaximoZ = 155; 
-const velocidadeZ = 1.0;   
+const velocidadeZ = 1.6;   
 
 let y0Ligado = false;
 let y4Ligado = false;
 let deslocamentoAtualX = 0;
 let alvoX = 0;
 const cursoMaximoX = 430; 
-const velocidadeX = 1.0;   
+const velocidadeX = 1.05;   
 
 let y1Ligado = false;
 let deslocamentoAtualY = 0;
 let alvoY = 0;
 const cursoMaximoY = 430; 
-const velocidadeY = 2.5;   
+const velocidadeY = 2.8;   
 
 function atualizarTelemetria() {
     const agora = new Date();
@@ -1630,26 +1630,29 @@ const layoutGaugePotencia = {
 Plotly.newPlot('gaugePotencia', dataGaugePotencia, layoutGaugePotencia);
 
 const ctxBarras = document.getElementById('chartBarrasPotencia').getContext('2d');
+
 const chartBarrasPotencia = new Chart(ctxBarras, {
     type: 'bar',
     data: {
-        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo'],
+        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo', 'Val. Pressão'], // Adicionado Y6
         datasets: [{
             label: 'Potência Instantânea (W)',
-            data: [18.0, 0.0, 0.0, 0.0, 0.0],
+            data: [18.0, 0.0, 0.0, 0.0, 0.0, 0.0], // Adicionado valor inicial 0.0 para Y6
             backgroundColor: [
                 'rgba(148, 163, 184, 0.85)',
                 'rgba(56, 189, 248, 0.85)',
                 'rgba(16, 185, 129, 0.85)',
                 'rgba(245, 158, 11, 0.85)',
-                'rgba(239, 68, 68, 0.85)'
+                'rgba(239, 68, 68, 0.85)',
+                'rgba(139, 92, 246, 0.85)'  // Cor roxa/índigo para Y6
             ],
             borderColor: [
                 '#64748b',
                 '#0284c7',
                 '#059669',
                 '#d97706',
-                '#dc2626'
+                '#dc2626',
+                '#7c3aed'   // Borda para Y6
             ],
             borderWidth: 1.5,
             borderRadius: 4
@@ -1663,7 +1666,7 @@ const chartBarrasPotencia = new Chart(ctxBarras, {
             x: { grid: { display: false } },
             y: {
                 beginAtZero: true,
-                max: 60,
+                max: 70, // Aumentado de 60 para 70 para comportar a nova carga
                 ticks: { stepSize: 10 },
                 title: { display: true, text: 'Watts (W)' }
             }
@@ -1727,6 +1730,7 @@ function consultarCLP() {
         let pSolenoideY = 0.0;
         let pSolenoideZ = 0.0;
         let pVacuoY3 = 0.0;
+        let pValvulaY6 = 0.0; // Nova variável para a válvula Y6
 
         if (dados.saidas && !erroConexao) {
             const driverDesabilitado = dados.saidas.Y5 || false;
@@ -1740,12 +1744,15 @@ function consultarCLP() {
             if (dados.saidas.Y1) pSolenoideY = 4.8;
             if (dados.saidas.Y2) pSolenoideZ = 4.8;
             if (dados.saidas.Y3) pVacuoY3 = 4.8;
+            if (dados.saidas.Y6) pValvulaY6 = 4.8; // Atribui potência se Y6 estiver ligada
 
-            const relesAtivos = [dados.saidas.Y0, dados.saidas.Y1, dados.saidas.Y2, dados.saidas.Y3, dados.saidas.Y4, dados.saidas.Y5].filter(Boolean).length;
+            // Inclui Y6 na contagem de relés ativos para dissipação na base
+            const relesAtivos = [dados.saidas.Y0, dados.saidas.Y1, dados.saidas.Y2, dados.saidas.Y3, dados.saidas.Y4, dados.saidas.Y5, dados.saidas.Y6].filter(Boolean).length;
             pBase += relesAtivos * 0.5;
         }
 
-        chartBarrasPotencia.data.datasets[0].data = [pBase, pMotorX, pSolenoideY, pSolenoideZ, pVacuoY3];
+        // Atualiza o gráfico com a nova posição para Y6
+        chartBarrasPotencia.data.datasets[0].data = [pBase, pMotorX, pSolenoideY, pSolenoideZ, pVacuoY3, pValvulaY6];
         chartBarrasPotencia.update();
 
         const elemDisplay = document.getElementById('valor-display-real');
