@@ -537,6 +537,160 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
   margin-top: 10px;
 }
 
+/* ESTILOS DA PÁGINA DE SHOWCASE DE HARDWARE (COMPONENTES) */
+@keyframes lightBreathing {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes dataFlow {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes iconPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(14, 165, 233, 0.7), inset 0 0 5px rgba(255, 255, 255, 0.4); }
+  50% { box-shadow: 0 0 24px rgba(56, 189, 248, 1), inset 0 0 8px rgba(255, 255, 255, 0.7); }
+}
+
+
+.component-viewer-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;          /* Ocupa toda a largura disponível do ecrã */
+  height: 82vh;             /* Altura exata idêntica à vista CAD 3D */
+  min-height: 550px;
+  margin: 0;                /* Remove as margens laterais */
+  background-color: #0d1322;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.09) 1px, transparent 1px);
+  background-size: 40px 40px;
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 0 30px rgba(56, 189, 248, 0.12);
+  overflow: hidden;
+}
+
+.component-viewer-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at 50% 35%, rgba(14, 165, 233, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+  animation: lightBreathing 5s ease-in-out infinite;
+  z-index: 1;
+}
+
+.robot-hero-img {
+  display: block;
+  width: 100%;
+  height: 100%;             /* Preenche a altura total do container wrapper */
+  max-height: none;         /* Remove o limite máximo estático */
+  object-fit: contain;      /* Mantém a proporção correta do robô sem distorcer */
+  margin: 0 auto;
+  border-radius: 8px;
+  filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.7));
+  position: relative;
+  z-index: 2;
+}
+
+.connector-svg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.connector-svg path { fill: none; stroke-width: 2; stroke-linecap: round; }
+.connector-track { stroke: rgba(14, 165, 233, 0.2); stroke-width: 3; }
+.connector-main { stroke: #38bdf8; filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.8)); }
+.connector-data { stroke: #bae6fd; stroke-dasharray: 10 30; animation: dataFlow 3s linear infinite; }
+
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hotspot-icon {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, #0ea5e9, #0369a1);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #38bdf8;
+  animation: iconPulse 3s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+
+.hotspot-icon svg { width: 30px; height: 30px; stroke: #ffffff; }
+
+.hotspot:hover .hotspot-icon {
+  transform: scale(1.2);
+  animation: none;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 1);
+}
+
+.popup-card {
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  width: 240px;
+  background: rgba(11, 17, 32, 0.96);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(56, 189, 248, 0.6);
+  border-radius: 8px;
+  padding: 10px;
+  color: #f8fafc;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  z-index: 30;
+  pointer-events: none;
+  text-align: left;
+}
+
+.hotspot:hover .popup-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
+.popup-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.popup-card h4 { margin: 0 0 3px 0; font-size: 12px; color: #38bdf8; }
+.popup-card .modelo-tag {
+  font-size: 10px; color: #e2e8f0; background: rgba(56, 189, 248, 0.2);
+  padding: 2px 5px; border-radius: 4px; display: inline-block; margin-bottom: 4px; font-weight: bold;
+}
+.popup-card p { margin: 0; font-size: 10px; color: #cbd5e1; line-height: 1.2; }
+
+.popup-card.popup-baixo {
+  bottom: auto;
+  top: 115%;
+}
+
+.hotspot:hover {
+  z-index: 100;
+}
+
 @media (max-width: 768px) {
   body { padding: 8px; }
   .container-principal { flex-direction: column; gap: 10px; }
@@ -568,6 +722,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
     <button class="btn-menu" onclick="mudarTela('pressao_real', this)">Transdutor de Pressão</button>
     <button class="btn-menu" onclick="mudarTela('monitor_entradas', this)">Entradas CLP</button>
     <button class="btn-menu" onclick="mudarTela('monitor_saidas', this)">Saídas CLP</button>
+    <button class="btn-menu" onclick="mudarTela('componentes', this)">Showcase de Hardware</button>
   </div>
 
   <div class="conteudo-principal">
@@ -708,6 +863,335 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
         </div>
 
         <div id="status_bt_texto" style="color: #94a3b8; font-family: monospace; margin-top: 15px; font-weight: bold; font-size: 1.1rem;">STATUS: AGUARDANDO COMANDO...</div>
+      </div>
+    </div>
+
+    <div id="tela-componentes" class="tela">
+      <div class="component-viewer-wrapper">
+        
+        <!-- Imagem do Robô Cartesiano -->
+        <img src="/assets/robo_cartesiano.png" alt="Robô Cartesiano Supervisório" class="robot-hero-img">
+
+        <!-- ==================== CAMADAS DE LINHAS SVG (18 LINHAS) ==================== -->
+        <svg class="connector-svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+          
+          <!-- 01. CLP FX3U -->
+          <path class="connector-track" d="M 120 60 L 260 60 L 380 150" />
+          <path class="connector-main"  d="M 120 60 L 260 60 L 380 150" />
+          <path class="connector-data"  d="M 120 60 L 260 60 L 380 150" />
+
+          <!-- 02. Módulo ESP32 -->
+          <path class="connector-track" d="M 120 120 L 260 120 L 360 190" />
+          <path class="connector-main"  d="M 120 120 L 260 120 L 360 190" />
+          <path class="connector-data"  d="M 120 120 L 260 120 L 360 190" />
+
+          <!-- 03. Fonte 24VDC -->
+          <path class="connector-track" d="M 120 180 L 260 180 L 330 220" />
+          <path class="connector-main"  d="M 120 180 L 260 180 L 330 220" />
+          <path class="connector-data"  d="M 120 180 L 260 180 L 330 220" />
+
+          <!-- 04. Módulo de Relés -->
+          <path class="connector-track" d="M 120 240 L 260 240 L 310 260" />
+          <path class="connector-main"  d="M 120 240 L 260 240 L 310 260" />
+          <path class="connector-data"  d="M 120 240 L 260 240 L 310 260" />
+
+          <!-- 05. Driver TB6600 (Eixo X) -->
+          <path class="connector-track" d="M 120 300 L 260 300 L 310 320" />
+          <path class="connector-main"  d="M 120 300 L 260 300 L 310 320" />
+          <path class="connector-data"  d="M 120 300 L 260 300 L 310 320" />
+
+          <!-- 06. Driver TB6600 (Eixo Y) -->
+          <path class="connector-track" d="M 120 360 L 260 360 L 310 360" />
+          <path class="connector-main"  d="M 120 360 L 260 360 L 310 360" />
+          <path class="connector-data"  d="M 120 360 L 260 360 L 310 360" />
+
+          <!-- 07. Driver TB6600 (Eixo Z) -->
+          <path class="connector-track" d="M 170 420 L 250 420 L 350 420" />
+          <path class="connector-main"  d="M 170 420 L 250 420 L 350 420" />
+          <path class="connector-data"  d="M 170 420 L 250 420 L 350 420" />
+
+          <!-- 08. Motor NEMA 23 (Eixo X) -->
+          <path class="connector-track" d="M 220 480 L 350 480 L 420 480" />
+          <path class="connector-main"  d="M 220 480 L 350 480 L 420 480" />
+          <path class="connector-data"  d="M 220 480 L 350 480 L 420 480" />
+
+          <!-- 09. Motor NEMA 23 (Eixo Y) -->
+          <path class="connector-track" d="M 300 540 L 400 540 L 450 520" />
+          <path class="connector-main"  d="M 300 540 L 400 540 L 450 520" />
+          <path class="connector-data"  d="M 300 540 L 400 540 L 450 520" />
+
+          <!-- 10. Motor NEMA 17 / Eixo Z -->
+          <path class="connector-track" d="M 700 540 L 650 540 L 610 500" />
+          <path class="connector-main"  d="M 700 540 L 650 540 L 610 500" />
+          <path class="connector-data"  d="M 700 540 L 650 540 L 610 500" />
+
+          <!-- 11. Fuso de Esferas -->
+          <path class="connector-track" d="M 880 480 L 750 480 L 680 480" />
+          <path class="connector-main"  d="M 880 480 L 750 480 L 680 480" />
+          <path class="connector-data"  d="M 880 480 L 750 480 L 680 480" />
+
+          <!-- 12. Guias Lineares e Patins -->
+          <path class="connector-track" d="M 880 420 L 740 420 L 690 420" />
+          <path class="connector-main"  d="M 880 420 L 740 420 L 690 420" />
+          <path class="connector-data"  d="M 880 420 L 740 420 L 690 420" />
+
+          <!-- 13. Válvula Solenóide 5/2 Vias -->
+          <path class="connector-track" d="M 880 360 L 730 360 L 700 360" />
+          <path class="connector-main"  d="M 880 360 L 730 360 L 700 360" />
+          <path class="connector-data"  d="M 880 360 L 730 360 L 700 360" />
+
+          <!-- 14. Válvula Solenóide Vácuo -->
+          <path class="connector-track" d="M 880 300 L 740 300 L 690 320" />
+          <path class="connector-main"  d="M 880 300 L 740 300 L 690 320" />
+          <path class="connector-data"  d="M 880 300 L 740 300 L 690 320" />
+
+          <!-- 15. Gerador de Vácuo Venturi -->
+          <path class="connector-track" d="M 880 240 L 700 240 L 650 260" />
+          <path class="connector-main"  d="M 880 240 L 700 240 L 650 260" />
+          <path class="connector-data"  d="M 880 240 L 700 240 L 650 260" />
+
+          <!-- 16. Ventosa Pneumática -->
+          <path class="connector-track" d="M 880 180 L 690 180 L 600 220" />
+          <path class="connector-main"  d="M 880 180 L 690 180 L 600 220" />
+          <path class="connector-data"  d="M 880 180 L 690 180 L 600 220" />
+
+          <!-- 17. Sensores Indutivos / Home -->
+          <path class="connector-track" d="M 880 120 L 680 120 L 540 190" />
+          <path class="connector-main"  d="M 880 120 L 680 120 L 540 190" />
+          <path class="connector-data"  d="M 880 120 L 680 120 L 540 190" />
+
+          <!-- 18. Transdutor -->
+          <path class="connector-track" d="M 880 60 L 680 60 L 490 150" />
+          <path class="connector-main"  d="M 880 60 L 680 60 L 490 150" />
+          <path class="connector-data"  d="M 880 60 L 680 60 L 490 150" />
+
+        </svg>
+
+        <!-- ==================== HOTSPOTS E POPUPS (18 ITENS COM FOTO) ==================== -->
+
+        <!-- 01. CLP FX3U -->
+        <div class="hotspot" style="top: 10%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="/assets/clp-fx3u.jpg" alt="CLP FX3U">
+            <h4>01. CLP FX3U-48MT</h4>
+            <div class="modelo-tag">Mitsubishi FX3U</div>
+            <p>Controlador principal responsável pela automação.</p>
+          </div>
+        </div>
+
+        <!-- 02. ESP32 -->
+        <div class="hotspot" style="top: 20%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="/assets/esp32.png" alt="ESP32">
+            <h4>02. Módulo ESP32</h4>
+            <p>Gateway IoT para interface Wi-Fi/Serial.</p>
+          </div>
+        </div>
+
+        <!-- 03. Fonte 24VDC -->
+        <div class="hotspot" style="top: 30%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="/assets/fonte.png" alt="Fonte 24V">
+            <h4>03. Fonte Chaveada</h4>
+            <div class="modelo-tag">24VDC / 10A</div>
+            <p>Alimentação geral para eletrônica e relés.</p>
+          </div>
+        </div>
+
+        <!-- 04. Módulo de Relés -->
+        <div class="hotspot" style="top: 40%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="/assets/rele.png" alt="Relés">
+            <h4>04. Módulo de Relés</h4>
+            <div class="modelo-tag">8 Canais 5V</div>
+            <p>Isolamento e acionamento de cargas.</p>
+          </div>
+        </div>
+
+        <!-- 05. Driver TB6600 (Eixo X) -->
+        <div class="hotspot" style="top: 50%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="/assets/driver.jpg" alt="Driver X">
+            <h4>05. Driver TB6600 (X)</h4>
+            <p>Controle de torque e posição do eixo X.</p>
+          </div>
+        </div>
+
+        <!-- 06. Driver TB6600 (Eixo Y) -->
+        <div class="hotspot" style="top: 60%; left: 12%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="/assets/driver-tb6600.jpg" alt="Driver Y">
+            <h4>06. Driver TB6600 (Y)</h4>
+            <p>Controle de torque e posição do eixo Y.</p>
+          </div>
+        </div>
+
+        <!-- 07. Driver TB6600 (Eixo Z) -->
+        <div class="hotspot" style="top: 70%; left: 17%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/driver-tb6600.jpg" alt="Driver Z">
+            <h4>07. Driver TB6600 (Z)</h4>
+            <p>Controle de torque e posição do eixo Z.</p>
+          </div>
+        </div>
+
+        <!-- 08. Motor NEMA 23 (Eixo X) -->
+        <div class="hotspot" style="top: 80%; left: 22%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/nema23.jpg" alt="Motor X">
+            <h4>08. Motor NEMA 23 (X)</h4>
+            <div class="modelo-tag">Alto Torque</div>
+            <p>Deslocamento linear horizontal principal.</p>
+          </div>
+        </div>
+
+        <!-- 09. Motor NEMA 23 (Eixo Y) -->
+        <div class="hotspot" style="top: 90%; left: 30%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/nema23.jpg" alt="Motor Y">
+            <h4>09. Motor NEMA 23 (Y)</h4>
+            <div class="modelo-tag">Alto Torque</div>
+            <p>Deslocamento do eixo transversal.</p>
+          </div>
+        </div>
+
+        <!-- 10. Motor NEMA 17 / Z -->
+        <div class="hotspot" style="top: 90%; left: 70%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/nema17.jpg" alt="Motor Z">
+            <h4>10. Motor Eixo Z</h4>
+            <div class="modelo-tag">NEMA 17 / 23</div>
+            <p>Movimentação vertical do cabeçote.</p>
+          </div>
+        </div>
+
+        <!-- 11. Fuso de Esferas -->
+        <div class="hotspot" style="top: 80%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 12h16M12 4l8 8-8 8"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/fuso.jpg" alt="Fuso">
+            <h4>11. Fuso de Esferas</h4>
+            <p>Transforma rotação em movimento linear.</p>
+          </div>
+        </div>
+
+        <!-- 12. Guias Lineares -->
+        <div class="hotspot" style="top: 70%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/guias.jpg" alt="Guias">
+            <h4>12. Guias Lineares</h4>
+            <p>Alinhamento mecânico e estabilidade.</p>
+          </div>
+        </div>
+
+        <!-- 13. Válvula Solenóide 5/2 -->
+        <div class="hotspot" style="top: 60%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/valvula-52.jpg" alt="Válvula 5/2">
+            <h4>13. Válvula Solenóide 5/2</h4>
+            <p>Acionamento pneumático duplo.</p>
+          </div>
+        </div>
+
+        <!-- 14. Válvula Vácuo -->
+        <div class="hotspot" style="top: 50%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+          </div>
+          <div class="popup-card">
+            <img src="assets/valvula-vacuo.jpg" alt="Válvula Vácuo">
+            <h4>14. Válvula de Vácuo</h4>
+            <p>Abre/fecha linha de vácuo das peças.</p>
+          </div>
+        </div>
+
+        <!-- 15. Gerador de Vácuo -->
+        <div class="hotspot" style="top: 40%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="assets/venturi.jpg" alt="Venturi">
+            <h4>15. Gerador Venturi</h4>
+            <p>Cria pressão negativa por ar comprimido.</p>
+          </div>
+        </div>
+
+        <!-- 16. Ventosa -->
+        <div class="hotspot" style="top: 30%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="assets/ventosa.jpg" alt="Ventosa">
+            <h4>16. Ventosa Pneumática</h4>
+            <div class="modelo-tag">ZVS30N</div>
+            <p>Órgão terminal de pega de materiais.</p>
+          </div>
+        </div>
+
+        <!-- 17. Sensores Indutivos -->
+        <div class="hotspot" style="top: 20%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="assets/sensor-indutivo.jpg" alt="Sensor">
+            <h4>17. Sensores Home / Indutivos</h4>
+            <p>Detecção de posição inicial e limites.</p>
+          </div>
+        </div>
+
+        <!-- 18. Transdutor de pressão -->
+        <div class="hotspot" style="top: 10%; left: 88%;">
+          <div class="hotspot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+          </div>
+          <div class="popup-card popup-baixo">
+            <img src="assets/transdutor.jpg" alt="Sensor">
+            <h4>18. Transdutor de pressão</h4>
+            <p>Leitura de pressão com sinal analógico.</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1030,6 +1514,9 @@ function mudarTela(tela, botao) {
     } else if(tela === 'monitor_saidas') {
         document.getElementById('tela-monitor_saidas').classList.add('ativa');
         document.getElementById('cabecalho').innerText = "DIAGNÓSTICO DIGITAL: SAÍDAS CLP";
+    } else if(tela === 'componentes') {
+        document.getElementById('tela-componentes').classList.add('ativa');
+        document.getElementById('cabecalho').innerText = "SHOWCASE DE HARDWARE: COMPONENTES";
     }
 }
 
@@ -1112,7 +1599,7 @@ loaderBase.load('/assets/MONTAGEM_BASE.stl', function (geometryBase) {
     geometryBase.computeVertexNormals();
     meshBase = new THREE.Mesh(geometryBase, materialBase);
     
-    meshBase.position.z += -150; // Altere o valor (ex: +100 ou -100) para mover para trás/frente
+    meshBase.position.z += -150;
     
     adicionarBordasAoModelo(meshBase, 0x000000, 15);
     gantryGroup.add(meshBase);
@@ -1212,7 +1699,7 @@ const velocidadeZ = 1.6;
 
 let y0Ligado = false;
 let y4Ligado = false;
-let x0Ligado = false; // Variável global para o sensor de recuo
+let x0Ligado = false;
 let deslocamentoAtualX = 0;
 let alvoX = 0;
 const cursoMaximoX = 430; 
@@ -1254,14 +1741,12 @@ function animateThreeJS() {
     }
 
     if (x0Ligado) {
-        alvoX = 0; // Sensor de recuo físico acionado, força o Digital Twin na origem
+        alvoX = 0;
     } else if (y0Ligado && y4Ligado) {
-        alvoX = cursoMaximoX; // Movendo para frente
+        alvoX = cursoMaximoX;
     } else if (y0Ligado && !y4Ligado) {
-        alvoX = 0; // Movendo para trás
+        alvoX = 0;
     } else {
-        // Motor parado (!y0Ligado) E NÃO está no recuo (!x0Ligado)
-        // Significa que o eixo já está lá na frente parado!
         alvoX = cursoMaximoX;
     }
 
@@ -1592,7 +2077,6 @@ function registrarLeituraPressao(valorBar) {
     
     Plotly.extendTraces('plotPressaoRealtime', { x: [[agora]], y: [[valorBar]] }, [0], 60);
 
-    // Atualização da barra visual de altura dinâmica (escala de 0 a 10 bar)
     const porcentagemBarra = Math.min(Math.max((valorBar / 10.0) * 100, 0), 100);
     const elBarra = document.getElementById('barra-pressao-nivel');
     if (elBarra) {
@@ -1641,17 +2125,17 @@ const ctxBarras = document.getElementById('chartBarrasPotencia').getContext('2d'
 const chartBarrasPotencia = new Chart(ctxBarras, {
     type: 'bar',
     data: {
-        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo', 'Valv. Pressão'], // Adicionado Y6
+        labels: ['Eletrônica Base', 'Motor de passo', 'Solenoide Y', 'Solenoide Z', 'Vácuo', 'Valv. Pressão'],
         datasets: [{
             label: 'Potência Instantânea (W)',
-            data: [18.0, 0.0, 0.0, 0.0, 0.0, 0.0], // Adicionado valor inicial 0.0 para Y6
+            data: [18.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             backgroundColor: [
                 'rgba(148, 163, 184, 0.85)',
                 'rgba(56, 189, 248, 0.85)',
                 'rgba(16, 185, 129, 0.85)',
                 'rgba(245, 158, 11, 0.85)',
                 'rgba(239, 68, 68, 0.85)',
-                'rgba(139, 92, 246, 0.85)'  // Cor roxa/índigo para Y6
+                'rgba(139, 92, 246, 0.85)'
             ],
             borderColor: [
                 '#64748b',
@@ -1659,7 +2143,7 @@ const chartBarrasPotencia = new Chart(ctxBarras, {
                 '#059669',
                 '#d97706',
                 '#dc2626',
-                '#7c3aed'   // Borda para Y6
+                '#7c3aed'
             ],
             borderWidth: 1.5,
             borderRadius: 4
@@ -1673,7 +2157,7 @@ const chartBarrasPotencia = new Chart(ctxBarras, {
             x: { grid: { display: false } },
             y: {
                 beginAtZero: true,
-                max: 70, // Aumentado de 60 para 70 para comportar a nova carga
+                max: 70,
                 ticks: { stepSize: 10 },
                 title: { display: true, text: 'Potência (W)' }
             }
@@ -1737,7 +2221,7 @@ function consultarCLP() {
         let pSolenoideY = 0.0;
         let pSolenoideZ = 0.0;
         let pVacuoY3 = 0.0;
-        let pValvulaY6 = 0.0; // Nova variável para a válvula Y6
+        let pValvulaY6 = 0.0;
 
         if (dados.saidas && !erroConexao) {
             const driverDesabilitado = dados.saidas.Y5 || false;
@@ -1753,14 +2237,12 @@ function consultarCLP() {
             if (dados.saidas.Y1) pSolenoideY = 4.8;
             if (dados.saidas.Y2) pSolenoideZ = 4.8;
             if (dados.saidas.Y3) pVacuoY3 = 4.8;
-            if (dados.saidas.Y6) pValvulaY6 = 4.8; // Atribui potência se Y6 estiver ligada
+            if (dados.saidas.Y6) pValvulaY6 = 4.8;
 
-            // Inclui Y6 na contagem de relés ativos para dissipação na base
             const relesAtivos = [dados.saidas.Y0, dados.saidas.Y1, dados.saidas.Y2, dados.saidas.Y3, dados.saidas.Y4, dados.saidas.Y5, dados.saidas.Y6].filter(Boolean).length;
             pBase += relesAtivos * 0.5;
         }
 
-        // Atualiza o gráfico com a nova posição para Y6
         chartBarrasPotencia.data.datasets[0].data = [pBase, pMotorX, pSolenoideY, pSolenoideZ, pVacuoY3, pValvulaY6];
         chartBarrasPotencia.update();
 
