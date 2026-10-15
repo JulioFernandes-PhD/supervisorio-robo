@@ -47,7 +47,7 @@ BAUDRATE = 38400
 DATA_BITS = 7
 PARIDADE = "E"
 STOP_BITS = 1
-USAR_CLP_REAL = True
+USAR_CLP_REAL = False
 
 # URL do seu serviço hospedado no Render
 URL_RENDER = "https://supervisorio-robo.onrender.com/api/atualizar"
@@ -175,6 +175,7 @@ def worker_leitura_clp():
                         ESTADO_ENTRADAS[key] = False
 
                     ESTADO_ENTRADAS["X2"] = True  # Emergência OK
+                    ESTADO_SAIDAS["Y6"] = True    # <--- ADICIONAR ESTA LINHA AQUI
 
                     # Posição atual no ciclo de 49 segundos
                     tempo_ciclo = segundos % 49
@@ -586,6 +587,7 @@ class CustomCombinedHTTPRequestHandler(BaseHTTPRequestHandler):
                         for key in ESTADO_ENTRADAS:
                             ESTADO_ENTRADAS[key] = False
                         ESTADO_ENTRADAS["X2"] = True  # Emergência OK
+                        ESTADO_SAIDAS["Y6"] = True    # <--- ADICIONAR ESTA LINHA AQUI
                         
                         # -------------------------------------------------------------
                         # SEQUÊNCIA TEMPORAL SINCRONIZADA (CICLO DE 49 SEGUNDOS NO RENDER)
