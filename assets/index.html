@@ -995,9 +995,9 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
           
           <div class="popup-card popup-baixo">
             <img src="/assets/clp-fx3u.png" alt="CLP FX3U">
-            <h4>01. CLP FX3U-48MT</h4>
-            <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Função: Responsável pelo controle de movimento do robô cartesiano e troca de sinais com o Python para o sistema supervisório WEB.</p>
+            <h4>01. CLP</h4>
+            <div class="modelo-tag">ESPECIFICAÇÃO: FX3U-48MT</div>
+            <p>Controlador lógico programável FX3U 48MR/48MT Este PLC FX3U 48MR/48MT possui 24 entradas e 24 saídas, com tecnologia de relé e transistor e alimentação DC 24 V. Além disso, possui entradas analógicas de tensão e corrente E Interfaces RS232 e RS485. Função: Responsável pelo controle de movimento do robô cartesiano e troca de sinais com o laptop (RS232 - programa em Python) para envio de dados para o sistema supervisório WEB.</p>
           </div>
         </div>
 
@@ -1022,9 +1022,9 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
           </div>
           <div class="popup-card popup-baixo">
             <img src="/assets/esp32.png" alt="ESP32">
-            <h4>02. Módulo ESP32</h4>
-            <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Gateway IoT para interface Wi-Fi/Serial.</p>
+            <h4>02. Microcontrolador</h4>
+            <div class="modelo-tag">ESPECIFICAÇÃO: ESP32</div>
+            <p>O ESP32 é um microcontrolador de baixo custo e baixo consumo com Wi-Fi e Bluetooth integrados, ideal para projetos de Internet das Coisas (IoT), possui conectividade Wi-Fi e Bluetooth (incluindo BLE) nativos. Função: Responsável por receber os sinais do controle (joystick) via bluetooth e enviar os sinais para o banco de relés.</p>
           </div>
         </div>
 
@@ -1046,7 +1046,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
             <img src="/assets/fonte.png" alt="Fonte 24V">
             <h4>03. Fonte Chaveada</h4>
             <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Alimentação geral para eletrônica e relés.</p>
+            <p>A Fonte Chaveada Colmeia 24V 5A 120W converte a energia de entrada (110V/220V) em corrente contínua de 24 Volts com capacidade de até 5 Amperes, entregando uma potência total de 120 Watts. Função: Fornece tensão para os componentes do sistema como o CLP, válvulas pneumáticas, regulador de tensão e outros componentes.</p>
           </div>
         </div>
 
@@ -1059,7 +1059,7 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
             <img src="/assets/rele.png" alt="Relés">
             <h4>04. Módulo de Relés</h4>
             <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Isolamento e acionamento de cargas.</p>
+            <p>O banco de relés para é controlado por sinais de baixa tensão que permite ligar e desligar dispositivos de alta potência e sua principal função é atuar como um interruptor acionado eletronicamente. Função: Recebe o sinal de baixa tensão do ESP32 e chaveia os sinais negativos para as entradas do CLP.</p>
           </div>
         </div>
 
@@ -1075,9 +1075,9 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
           </div>
           <div class="popup-card">
             <img src="/assets/driver.png" alt="Driver X">
-            <h4>05. Driver TB6600 (X)</h4>
-            <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Controle de torque e posição do eixo X.</p>
+            <h4>05. Driver</h4>
+            <div class="modelo-tag">ESPECIFICAÇÃO: TB6600</div>
+            <p>O TB6600 converte sinais digitais de pulso e direção vindos do CLP em correntes alternadas para as bobinas do motor de passo para um movimento suave, preciso e com bom torque mesmo em baixas velocidades. Função: Controle de pulso, direção e Axis Enable do motor de passo NEMA 23 que movimenta o eixo X.</p>
           </div>
         </div>
 
@@ -1096,8 +1096,8 @@ body { margin: 0; padding: 15px; font-family: 'Helvetica Neue', Helvetica, Arial
           <div class="popup-card">
             <img src="/assets/atuador_Y.png" alt="OSPP040">
             <h4>06. Atuador pneumático (Y)</h4>
-            <div class="modelo-tag">ESPECIFICAÇÃO: XXX</div>
-            <p>Movimento transversal do eixo Y.</p>
+            <div class="modelo-tag">ESPECIFICAÇÃO: OSPP40</div>
+            <p>O cilindro pneumático sem haste da Parker (destacando a famosa Série Origa OSP-P) é um atuador linear projetado para economizar espaço axial, ocupando metade do espaço de um cilindro tradicional. Função: Movimento do eixo Y que suporta ao mesmo tempo o eixo Z.</p>
           </div>
         </div>
 
